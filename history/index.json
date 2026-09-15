@@ -1,0 +1,28 @@
+{
+  "desc": "GPU 价格历史快照索引。每次刷新追加一条；快照文件与索引一并提交到 GitHub 做备份。",
+  "fxRate": 6.7156,
+  "snapshots": [
+    {
+      "file": "prices-2026-09-15T1315.json",
+      "ts": "2026-09-15T13:14:52+08:00",
+      "summary": {
+        "cells": 93,
+        "verified": 73,
+        "pending": 14,
+        "na": 6
+      },
+      "changed": 28
+    },
+    {
+      "file": "prices-2026-09-15T1316.json",
+      "ts": "2026-09-15T13:16:40+08:00",
+      "summary": {
+        "cells": 93,
+        "verified": 73,
+        "pending": 14,
+        "na": 6
+      },
+      "changed": 28
+    }
+  ]
+}

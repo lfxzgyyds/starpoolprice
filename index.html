@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GPU 算力价格横向对比</title>
+<style>
+:root{--bg:#f5f7fb;--ink:#162033;--muted:#556275;--line:#e4e8f0;--blue:#2855d9;--blue2:#eaf0ff;--green:#13795b;--amber:#7c4300;--red:#a33b3b;--card:#fff;--shadow:0 8px 24px rgba(29,45,80,.06)}*{box-sizing:border-box}body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,Segoe UI,Microsoft YaHei,sans-serif}header{background:#101827;color:#fff;padding:28px 34px 24px}header .eyebrow{font-size:12px;letter-spacing:.08em;color:#aab7ce;text-transform:uppercase}h1{margin:6px 0 4px;font-size:26px}header p{margin:0;color:#bdc7d8}.wrap{max-width:1440px;margin:auto;padding:24px 30px 42px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}.stat{min-width:0;padding:18px 20px}.stat b{display:block;font-size:26px;margin-top:5px}.label{color:var(--muted);font-size:12px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}.toolbar input,.toolbar select{min-width:0;background:#fff;border:1px solid var(--line);border-radius:7px;padding:9px 11px;color:var(--ink)}.tabs{display:flex;gap:8px}.tab{border:1px solid var(--line);background:#fff;color:#42516b;padding:9px 14px;border-radius:7px;cursor:pointer}.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}.panel{overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.panel-head h2{font-size:16px;margin:0}.note{font-size:12px;color:var(--muted)}.table-wrap{overflow:auto;outline:none}.table-wrap:focus-visible{box-shadow:inset 0 0 0 2px var(--blue)}table{border-collapse:collapse;width:100%;min-width:2800px}th,td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;min-width:190px}th:first-child,td:first-child{min-width:150px}th{background:#fafbfe;color:#4d5b70;font-size:12px;position:sticky;top:0;z-index:1}tbody tr:hover{background:#fbfcff}.gpu{font-weight:700;white-space:nowrap}.price{font-weight:700;color:#1c2f62}.na{color:#4b5563;font-weight:600}.meta{display:block;font-size:11px;color:var(--muted);margin-top:3px;white-space:normal;max-width:250px}.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:11px;margin-top:5px}.verified{background:#e9f7f1;color:var(--green)}.pending{background:#fff1d6;color:var(--amber)}.missing{background:#eceff3;color:#374151}.evidence{margin-top:7px;font-size:11px}.evidence summary{color:var(--blue);cursor:pointer;list-style-position:inside}.evidence[open] summary{margin-bottom:5px}.warn{color:var(--amber);font-weight:700}.route{display:none}.route.active{display:block}.footer{color:var(--muted);font-size:12px;margin-top:20px}.link{color:var(--blue);text-decoration:none}.legend{display:flex;gap:12px;align-items:center;font-size:12px;color:var(--muted)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:18px 14px}header{padding:22px 18px}.panel-head{align-items:flex-start;gap:8px;flex-direction:column}}@media(max-width:560px){header p span{display:block}.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.tab{padding:9px 8px}.toolbar input,.toolbar select{flex:1 1 150px;width:0}}
+.btn-refresh{border:1px solid var(--blue);background:var(--blue);color:#fff;padding:9px 16px;border-radius:7px;cursor:pointer;font-weight:600;white-space:nowrap}.btn-refresh:hover{filter:brightness(1.06)}.btn-refresh:disabled{opacity:.6;cursor:progress}.btn-disabled{opacity:.55;cursor:not-allowed;background:#eef1f7;color:#7b8698;border-color:#dfe4ee}.btn-ghost{background:#fff;color:var(--blue);border-color:var(--blue)}.btn-ghost:hover{background:var(--blue2)}.hist-body{padding:16px 18px}.warn{color:var(--red);font-weight:600}.good{color:var(--green);font-weight:600}.alert-note{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px;background:#fafbfe;border:1px solid var(--line);border-radius:7px;padding:10px 12px}.hist-body h3{font-size:14px;margin:20px 0 8px}.hist-body .meta-line{font-size:12px;color:var(--muted);margin-bottom:12px}.trend td,.trend th{min-width:120px;white-space:nowrap}
+</style>
+</head>
+<body>
+<header><div class="eyebrow">Pricing intelligence · 2026-09-14</div><h1>GPU 算力价格横向对比</h1><p><span>NVIDIA 行统一口径：人民币 ¥/GPU·hr</span><span> · 单卡价 = 整机时租 ÷ GPU 数量</span><span> · 官网重核（含已登录 UI）</span></p></header>
+<main class="wrap">
+<section class="stats"><div class="stat"><span class="label">对比卡型</span><b id="gpuCount">0</b></div><div class="stat"><span class="label">覆盖平台</span><b>13</b></div><div class="stat"><span class="label">我方 SKU</span><b>67</b></div><div class="stat"><span class="label">已核验官网记录</span><b id="verifiedCount">0</b></div></section>
+<div class="toolbar" aria-label="看板筛选"><div class="tabs" role="tablist" aria-label="看板视图"><button class="tab active" role="tab" aria-selected="true" data-route="matrix">统一矩阵</button><button class="tab" role="tab" aria-selected="false" data-route="overseas">海外路线</button><button class="tab" role="tab" aria-selected="false" data-route="china">中国路线</button><button class="tab" role="tab" aria-selected="false" data-route="base">我方基准</button><button class="tab" role="tab" aria-selected="false" data-route="history">历史快照</button><button class="tab" role="tab" aria-selected="false" data-route="alert">价格预警</button></div><button id="refreshBtn" class="btn-refresh" title="从各平台抓取最新价，回写看板并保存历史快照（需先运行 node server.mjs）">🔄 刷新价格</button><button id="exportBtn" class="btn-refresh btn-ghost" title="把全部卡型 × 平台的价格矩阵导出为 Excel（.xlsx），含价格预警与来源明细两个附加表">⤓ 导出 Excel</button><label class="sr-only" for="search">搜索卡型或平台</label><input id="search" placeholder="搜索卡型 / 平台"/><label class="sr-only" for="gpuFilter">按卡型筛选</label><select id="gpuFilter"><option value="">全部卡型</option></select><span id="filterStatus" class="sr-only" aria-live="polite"></span></div>
+<section id="matrix" class="panel route active" role="tabpanel"><div class="panel-head"><h2>主价格矩阵</h2><div class="legend"><span class="tag verified">官网价</span><span class="tag pending">待重核</span><span class="tag missing">N/A</span></div></div><div class="table-wrap" tabindex="0" aria-label="主价格矩阵，可横向滚动"><table><caption class="sr-only">GPU 算力价格统一矩阵</caption><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div></section>
+<section id="overseas" class="panel route" role="tabpanel"><div class="panel-head"><h2>海外路线 · 5 家 + 我方基准</h2><span class="note">USD→CNY = 6.7156（公开 API 交叉复核）；AWS/Google Cloud/RunPod 为公开官网价</span></div><div class="table-wrap" tabindex="0" aria-label="海外价格矩阵，可横向滚动"><table><caption class="sr-only">海外 GPU 云平台价格对比</caption><thead><tr id="headOver"></tr></thead><tbody id="bodyOver"></tbody></table></div></section>
+<section id="china" class="panel route" role="tabpanel"><div class="panel-head"><h2>中国路线 · 7 家 + 我方基准</h2><span class="note">官网未公开 / 登录或配额路径未返回价格时保留 N/A</span></div><div class="table-wrap" tabindex="0" aria-label="中国价格矩阵，可横向滚动"><table><caption class="sr-only">中国 GPU 云平台价格对比</caption><thead><tr id="headChina"></tr></thead><tbody id="bodyChina"></tbody></table></div></section>
+<section id="base" class="panel route" role="tabpanel"><div class="panel-head"><h2>我方平台基准明细</h2><span class="note">星池 starpool.cc 67 SKU 按卡型聚合（单卡价 = 整机时租 ÷ 卡数），区间保留内部价差 · 2026-09-15 实测</span></div><div class="table-wrap" tabindex="0" aria-label="我方平台基准明细，可横向滚动"><table><caption class="sr-only">我方平台 67 SKU 聚合基准</caption><thead><tr><th scope="col">卡型</th><th scope="col">单卡价格（¥/GPU·hr）</th><th scope="col">备注</th></tr></thead><tbody id="bodyBase"></tbody></table></div></section>
+<section id="history" class="panel route" role="tabpanel"><div class="panel-head"><h2>历史快照 · 本地存档</h2><span class="note" id="histMeta">加载中…</span></div><div class="hist-body"><div class="toolbar" style="margin:0 0 10px"><label for="histCard">卡型走势：</label><select id="histCard"></select><span class="note">每次刷新在 <code>history/</code> 落一个 JSON 快照，可 git 提交到 GitHub 备份</span></div><div class="table-wrap"><table class="trend"><thead><tr id="histHead"></tr></thead><tbody id="histBody"></tbody></table></div><h3>快照清单</h3><div class="table-wrap"><table><thead><tr><th>时间</th><th>单元格</th><th>已核验</th><th>待重核</th><th>N/A</th><th>变化</th></tr></thead><tbody id="histList"></tbody></table></div></div></section>
+<section id="alert" class="panel route" role="tabpanel"><div class="panel-head"><h2>价格预警 · 以我方平台为基准</h2><span class="note" id="alertMeta">计算中…</span></div><div class="hist-body"><div class="alert-note"><b>口径：</b>以「我方平台」单卡价为基准；「其他平台均价」= 所有<b>有报价</b>平台（不含我方平台、不含 N/A）单卡价的算术平均数，区间价取中点。<b>「其他高出我方%」=（其他平台均价 − 我方平台）÷ 我方平台 × 100%</b>：正值表示市场比我方贵（我方有价格优势），负值表示市场比我方便宜（<span class="warn">预警</span>，阈值 ±5%）。</div><div class="table-wrap"><table><thead><tr><th>卡型</th><th>我方平台</th><th>覆盖平台数</th><th>其他平台均价</th><th>其他高出我方%</th><th>状态</th></tr></thead><tbody id="alertBody"></tbody></table></div></div></section>
+<div class="footer">数据口径来自用户提供的《GPU价格对比任务规范.md》。海外换算采用 <a class="link" href="https://open.er-api.com/v6/latest/USD" target="_blank" rel="noreferrer">USD/CNY 6.7156</a>（2026-09-14 公开 API 交叉复核）。我方平台列为星池 starpool.cc 67 个 SKU 单卡折算（2026-09-15 实测）。每个单元格都显示来源、计费类型与采集时间；N/A 仍保留对应官网入口与事实原因。NVIDIA 行为 ¥/GPU·hr；昇腾为 ¥/NPU·hr，T4 虚拟分片不纳入矩阵。⚠️ 表示动态市场价、特殊计费或型号命名待确认。</div>
+</main>
+<script>
+const platforms=['我方平台','IO.net','AWS','Google Cloud','Vast.ai','RunPod','阿里云','网鼎(立方云)','腾讯云','火山引擎','智星云','AutoDL','华为云'];
+const cards=['H100','H100 NVL','H200','B200','B300','A100','L40S','L40','L4','RTX 6000 Ada','6000 ADA','A6000','T4','V100','V100_32G','L20','H20','RTX 5090','RTX 4090','RTX 3090','A800','PRO 6000 BLACKWELL','RTX PRO 6000','A40','A30','GAUDI2','昇腾 310','昇腾 910B','昇腾 910C?/Snt9c','昇腾 910/D910'];
+const urls={'IO.net':'https://cloud.io.net/cloud/virtual-machines','AWS':'https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json','Google Cloud':'https://cloud.google.com/products/compute/pricing/accelerator-optimized','Vast.ai':'https://vast.ai/','RunPod':'https://www.runpod.io/pricing','阿里云':'https://www.aliyun.com/price/product#/ecs','网鼎(立方云)':'https://www.lifangyun.com/api/v1/home/compute-instances/display','腾讯云':'https://cloud.tencent.com/document/product/560/8025','火山引擎':'https://www.volcengine.com/product/gpucloud','智星云':'https://ai-galaxy.cn/','AutoDL':'https://www.autodl.com/api/v1/machine/gpu_type','华为云':'https://www.huaweicloud.com/pricing/calculator.html#/ecs'};
+const fxRate=6.7156;
+const fxSource='https://open.er-api.com/v6/latest/USD';
+const awsApi=urls['AWS'];
+const huaweiApi='https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN';
+const huaweiEcsApi='https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN';
+const lifangApi=urls['网鼎(立方云)'];
+const sourceTimes={
+  [awsApi]:'2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）',
+  [urls['Google Cloud']]:'2026-09-14 15:23–15:28 CST',
+  [urls['RunPod']]:'2026-09-14 14:15–14:32 CST',
+  'https://cloud.vast.ai/?gpuModelNames=gh200Sxm%2Ch100Nvl%2Ch100Pcie%2Ch100Sxm':'2026-09-14T15:38:58+08:00',
+  'https://cloud.vast.ai/?gpuModelNames=h200Sxm':'2026-09-14T15:08:50+08:00',
+  [huaweiEcsApi]:'2026-09-14T16:01:27.869+08:00',
+  [huaweiApi]:'2026-09-14T15:08:27+08:00',
+  [lifangApi]:'2026-09-14 15:51–15:54 CST',
+  [urls['智星云']]:'2026-09-14 15:51–15:54 CST',
+  [urls['阿里云']]:'2026-09-14T15:51:35+08:00',
+  [urls['腾讯云']]:'2026-09-14T15:53:18+08:00',
+  [urls['火山引擎']]:'2026-09-14T15:51:32+08:00',
+  [urls['AutoDL']]:'2026-09-14T15:51:31+08:00',
+  [urls['IO.net']]:'2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）'
+};
+const sourceTime='2026-09-14（本次匿名公开采集）';
+const capturedFor=source=>sourceTimes[source]||sourceTime;
+const baseValues={
+  H100:['¥25.01–41.83','星池实测（同卡型内部价差大）'],H200:['¥36.40–48.30','星池实测'],B200:['N/A','我方目录未列'],B300:['N/A','我方目录未列'],A100:['¥12.40–21.56','星池实测（含 DGX A100）'],L40S:['¥8.07–18.79','星池实测（批量 x4/x8 与单卡价差大）'],L40:['¥6.36','星池实测'],L4:['¥10.01–10.64','星池实测'],A6000:['¥4.74','星池实测'],T4:['¥4.54','星池实测'],V100:['¥12.11–15.13','星池实测（另有 1 条异常低价 ¥1.83）'],V100_32G:['¥23.60','星池实测'],L20:['N/A','我方目录未列'],H20:['N/A','我方目录未列'], 'RTX 6000 Ada':['¥9.78–9.79','星池实测（RTX6000Ada 组）'], '6000 ADA':['¥6.55–6.56','星池实测（与 RTX6000Ada 并列的独立型号组）'], 'PRO 6000 BLACKWELL':['¥20.07','星池实测'], 'RTX PRO 6000':['¥19.13–34.38','星池实测（RTXPro6000/RTXPRO6000 命名变体）'],A40:['¥14.53–14.60','星池实测'],A30:['¥13.62–18.91','星池实测'],GAUDI2:['¥11.09','Intel Gaudi 2 加速器（星池 GAUDI2x8 整机 ¥88.74 ÷8）'], '昇腾 310':['N/A','我方目录未列'], '昇腾 910B':['N/A','我方目录未列'], '昇腾 910C?/Snt9c':['N/A','我方目录未列'], '昇腾 910/D910':['N/A','我方目录未列'], 'H100 NVL':['N/A','我方目录未列']
+};
+const base={}; cards.forEach(g=>base[g]=baseValues[g]||['N/A','我方目录未列']);
+const d=(value,status='verified',type='on-demand',source='',note='',label='',unit='¥/GPU·hr',captured=capturedFor(source))=>({value,status,type,source,note,label,unit,captured});
+const data={
+  "H100":{
+    "IO.net":d("¥17.46–26.80","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后 Virtual Machine 目录的在售 H100：x1、80 GB，US $2.60/hr 与 Finland $3.99/hr；均为单卡实例，USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "AWS":d("¥46.20","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p5.48xlarge：8×H100，$55.04/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "Google Cloud":d("¥74.28–78.41","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A3 High/Mega：8×H100，完整 VM 总价÷8；$11.0613–11.6751/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "Vast.ai":d("⚠️ ¥13.45–17.92起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=gh200Sxm%2Ch100Nvl%2Ch100Pcie%2Ch100Sxm","公开 UI 动态挂单：H100 PCIe/SXM；带宽另计，随宿主变化","社区参考价","¥/GPU·hr","2026-09-14T15:38:58+08:00"),
+    "RunPod":d("¥13.36","verified","Community / Secure on-demand","https://www.runpod.io/pricing","Rent H100 $1.99/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "H100 NVL":{
+    "IO.net":d("N/A","na","官网未列","https://cloud.io.net/cloud/virtual-machines","登录后目录未见在售 H100 NVL；仅通用 H100 在售，未将其推定为 NVL","官网未列","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "Vast.ai":d("⚠️ ¥17.41起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=gh200Sxm%2Ch100Nvl%2Ch100Pcie%2Ch100Sxm","公开 UI 1×H100 NVL 动态挂单 $2.592/hr；带宽另计","社区参考价","¥/GPU·hr","2026-09-14T15:38:58+08:00"),
+    "RunPod":d("¥17.39–21.42","verified","Community / Secure on-demand","https://www.runpod.io/pricing","H100 NVL 单列 SKU，$2.59–3.19/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
+  },
+  "H200":{
+    "IO.net":d("¥25.45–33.51","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后 Virtual Machine 目录的在售 H200：x1、141 GB，US $3.79/hr 与 Finland $4.99/hr；均为单卡实例，USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "AWS":d("¥53.13","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p5en.48xlarge：8×H200，$63.296/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "Google Cloud":d("¥71.19","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A3 Ultra：8×H200，完整 VM 总价÷8；$10.6009/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "Vast.ai":d("¥26.73起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=h200Sxm","公开 UI 动态挂单首条 1×H200 $3.980/hr；带宽另计，随宿主变化","社区参考价","¥/GPU·hr","2026-09-14T15:08:50+08:00"),
+    "RunPod":d("¥24.11","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand H200 $3.59/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "B200":{
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 B200 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "AWS":d("¥95.64","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p6-b200.48xlarge：8×B200，$113.9328/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "Google Cloud":d("⚠️ ¥54.09","pending","DWS Flex Start（非 on-demand）","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A4 $64.44/8 GPU；官方按需价为不适用，不与 on-demand 并列","特殊价","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "RunPod":d("¥40.16–45.60","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B200，$5.98–6.79/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
+  },
+  "B300":{
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 B300 SXM6 AC x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥46.61–52.99","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B300，$6.94–7.89/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
+  },
+  "A100":{
+    "IO.net":d("¥8.67–14.84","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A100（80 GB）：US x8 $10.33/hr ÷8 = $1.29125/GPU·hr；India x1 $2.21/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "AWS":d("¥18.43","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p4d.24xlarge：8×A100，$21.957642/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "Google Cloud":d("¥23.40–34.04","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A2 Standard/Ultra/Mega：完整 VM 总价÷GPU 数；$3.4837–5.0688/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "RunPod":d("¥7.99","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand A100 $1.19/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥8.00","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A100 80G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "阿里云":d("¥34.74","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn7e-c16g1.4xlarge = 1×A100 80G（16vCPU/125GiB），按量目录价 ¥34.742/实例·小时 ÷1 = ¥34.74/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "火山引擎":d("¥50.4","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A100*1，50.4 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "腾讯云":d("¥26.97","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GT4.4XLARGE96 = 1×A100 40G（NVLink），16核96GB；官网价格计算器按量T1官网优惠价 ¥26.97/实例·小时 ÷1 = ¥26.97/卡·小时（广州/重庆同价，2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
+    "AutoDL":d("⚠️ ¥3.28","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","A100 PCIe 40G ¥3.28/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：无 A100 专区（仅 V100/A800/L20/摩尔线程专区），GPU型号筛选亦无 A100，在售视图 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+  },
+  "L40S":{
+    "IO.net":d("¥5.64","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 L40S、48 GB，$0.84/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "L40":{
+    "IO.net":d("¥4.43","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 L40、48 GB，$0.66/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "腾讯云":d("⚠️ ¥8","pending","按量计费（第三方引用官方价，待登录复核）","https://cloud.tencent.com/document/product/560/8025","L40 机型按量计费 ¥8/实例·小时 ÷1；2026-09-15 登录官网价格计算器核验：GPU机型分类未列 L40，保留第三方引用价","待官网复核","¥/GPU·hr","2026-09-15（第三方价表快照，待登录复核）")
+  },
+  "L4":{
+    "IO.net":d("¥7.08–7.45","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 L4（24 GB）：Poland x4 $4.22/hr ÷4 = $1.055/GPU·hr；US/France/Poland x1 均 $1.11/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "Google Cloud":d("¥4.75–11.65","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· G2 完整 VM 总价÷GPU 数；1×L4 SKU 的 CPU/内存不同","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "火山引擎":d("¥8.06","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：L4*1，8.06 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "阿里云":d("¥9.53","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn7i-c8g1.2xlarge = 1×L4 24G（8vCPU/30GiB），按量目录价 ¥9.5326/实例·小时 ÷1 = ¥9.53/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "RTX 6000 Ada":{
+    "IO.net":d("¥6.85","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 RTX6000Ada、48 GB，$1.02/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥4.97","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand RTX 6000 Ada $0.74/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "A6000":{
+    "IO.net":d("¥3.29","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 A6000、48 GB，$0.49/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥2.22","verified","Community / Secure on-demand","https://www.runpod.io/pricing","RTX A6000 $0.33/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥2.40","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX A6000 48G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST")
+  },
+  "T4":{
+    "IO.net":d("¥3.16","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：India x1 T4、16 GB，$0.47/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "华为云":d("¥6.33","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· g6.xlarge.4.linux：1×NVIDIA T4 16G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "火山引擎":d("¥7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：T4*1，7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "腾讯云":d("¥8.68","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GN7.2XLARGE32 = 1×T4（实为 8核32GB），官网价格计算器按量T1 ¥8.68/实例·小时 ÷1 = ¥8.68/卡·小时（第三方快照 ¥1.2 偏低，已按官网计算器校正，2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
+    "阿里云":d("¥11.63","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6i-c4g1.xlarge = 1×T4 16G（4vCPU/15GiB），按量目录价 ¥11.63/实例·小时 ÷1 = ¥11.63/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "V100":{
+    "IO.net":d("¥8.46–10.58","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 V100（India、32 GB）：x1 $1.57/hr、x2 $2.52/hr ÷2、x4 $6.30/hr ÷4；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "华为云":d("¥16.44–17.26","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· V100-PCIe-32G ¥16.44、V100-SXM2-32G ¥17.259；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "火山引擎":d("¥14.7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：V100*1，14.7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "V100_32G":{
+    "IO.net":d("¥16.52","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 V100_32G、32 GB，$2.46/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "华为云":d("¥16.44–17.26","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· 1×V100-PCIe-32G / 1×V100-SXM2-32G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "智星云":d("¥1.32","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","V100 32G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "火山引擎":d("¥14.7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：V100*1，14.7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "腾讯云":d("¥11.98","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GN10Xp.2XLARGE40 = 1×V100 32G（NVLink），10核40GB；官网价格计算器按量T1 ¥11.98/实例·小时 ÷1 = ¥11.98/卡·小时（2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
+    "AutoDL":d("¥1.88","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","V100-32GB ¥1.88/卡·小时（V100专区/beijingDC3，会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）"),
+    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "L20":{
+    "火山引擎":d("¥30","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：L20*1，30 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "阿里云":d("¥14.42","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8is.2xlarge = 1×L20 48G（8vCPU/64GiB），按量目录价 ¥14.415104/实例·小时 ÷1 = ¥14.42/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("⚠️ ¥3.68","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","L20 48G ¥3.68/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：L20专区/beijingDC4 当前 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+  },
+  "H20":{
+    "阿里云":d("¥36.39","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8v.4xlarge = 1×H20 96G（16vCPU/96GiB），按量目录价 ¥36.3852/实例·小时 ÷1 = ¥36.39/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("⚠️ ¥7.98","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","H20 96G ¥7.98/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：无 H20 专区，GPU型号筛选亦无 H20，在售视图 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+  },
+  "RTX 5090":{
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 5090 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "网鼎(立方云)":d("¥2.98","verified","按小时","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：RTX 5090 32 GB · 1 张 · price=2.98 hour","官网明码价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥2.75","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 5090 32G 训练池，官网 Nuxt 资源公开挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "阿里云":d("¥20.12","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn9t.6xlarge = 1×RTX 5090 32G（24vCPU/192GiB），按量目录价 ¥20.1172/实例·小时 ÷1 = ¥20.12/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("¥2.78","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","RTX 5090 / 32GB ¥2.78/卡·小时（会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）")
+  },
+  "RTX 4090":{
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 4090 / 4090 D x1 均标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "智星云":d("¥1.65","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 4090，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "火山引擎":d("¥8.75","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：4090D*1 24G，12vCPU/64GiB，8.75 元/GPU/小时（4090D 特供版置于 RTX 4090 行）","官方文档价","¥/GPU·hr","2026-09-15T10:10+08:00（官方文档通用队列按量价表重核）"),
+    "阿里云":d("¥14.49","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8t.4xlarge = 1×RTX 4090 24G（16vCPU/128GiB），按量目录价 ¥14.49/实例·小时 ÷1 = ¥14.49/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("⚠️ ¥1.98","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","4090D 24G ¥1.98/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：GPU型号筛选 RTX 4090/4090D 显示 0/1788、0/1024 台可租，在售视图无实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+  },
+  "RTX 3090":{
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 3090 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "智星云":d("¥1.10","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 3090，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "AutoDL":d("⚠️ ¥1.58","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","RTX 3090 24G ¥1.58/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：GPU型号筛选 RTX 3090 显示 0/210 台可租，在售视图无实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+  },
+  "A800":{
+    "智星云":d("¥2.31","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A800 40G 训练池，官网 Nuxt 资源公开挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "AutoDL":d("¥5.59","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","A800-80GB ¥5.59/卡·小时（A800专区/neimengDC2，会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取，原社区快照 ¥5.98 偏高已校正","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）"),
+    "腾讯云":d("⚠️ ¥14","pending","按量计费（第三方引用官方价，待登录复核）","https://cloud.tencent.com/document/product/560/8025","A800 机型按量计费 ¥14/实例·小时 ÷1；2026-09-15 登录官网价格计算器核验：GPU机型分类未列 A800，保留第三方引用价","待官网复核","¥/GPU·hr","2026-09-15（第三方价表快照，待登录复核）")
+  },
+  "PRO 6000 BLACKWELL":{
+    "IO.net":d("¥14.04","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 PRO 6000 BLACKWELL、96 GB，$2.09/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "网鼎(立方云)":d("¥7.90","pending","按小时","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：PRO 6000 96 GB · 1 张 · price=7.90；页面未标注 Blackwell，型号待确认","型号待确认","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "RTX PRO 6000":{
+    "IO.net":d("⚠️ ¥13.31–24.04","pending","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录采用 RTXPro6000/RTXPRO6000 名称（均 96 GB）：Finland x4 $7.93/hr ÷4 到 Australia/Japan/Netherlands/US x8 $28.64/hr ÷8；与本表 RTX PRO 6000 命名变体的硬件对应关系待确认","型号待确认","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥11.35","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand RTX Pro 6000 $1.69/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "A40":{
+    "IO.net":d("¥10.14–10.21","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A40（India、48 GB）：x1 $1.51/hr；x2 $3.04/hr ÷2；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "RunPod":d("¥2.35","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand A40 $0.35/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥2.20","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A40，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST")
+  },
+  "A30":{
+    "IO.net":d("¥9.52–13.23","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A30（India、24 GB）：x4 $5.67/hr ÷4 = $1.4175/GPU·hr；x1 $1.97/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "火山引擎":d("¥8.05","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A30*1，8.05 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+  },
+  "昇腾 310":{
+    "华为云":d("¥1.10","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· ai1.large.4.linux：1×Ascend 310 8G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/NPU·hr","2026-09-14T16:01:27.869+08:00")
+  },
+  "昇腾 910B":{
+    "华为云":d("¥18.68–33.97","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· 1×snt9b1/2/3，官方字段标识 910B","计算器选配","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+  },
+  "昇腾 910C?/Snt9c":{
+    "华为云":d("⚠️ ¥67.88","pending","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· Snt9c 超节点 Pro ¥543/8 卡；官方未直接写 910C","型号待确认","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+  },
+  "昇腾 910/D910":{
+    "华为云":d("¥29.25","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","8×bm.d910.xlarge.8.d：¥233.975/实例·hr ÷8；1×SKU 的 GPU count=0，未纳入严格折算","计算器选配","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+  }
+};
+const naReasons={
+  'IO.net':'登录后 Virtual Machine 目录未列该卡型的在售实例；售罄或仅可 Request 的条目不作为当前可购买价格',
+  AWS:'本次 us-east-1 官方 EC2 公开目录未核到该卡型的可复核 SKU/单价',
+  'Google Cloud':'官方加速器定价页未列该卡型或未列可直接折算的完整 VM SKU',
+  'Vast.ai':'公开市场为动态宿主挂单；本次未获得该卡型的固定可复核报价',
+  RunPod:'官方公开价格页未列该卡型',
+  '阿里云':'官方 RDS Custom AI 节点 / ECS GPU 价表（help.aliyun.com）仅覆盖部分卡型；未列卡型以 N/A 保留，待 ECS 价格计算器登录复核',
+  '网鼎(立方云)':'官网公开记录显示“获取报价”或 price=???，非下单前明码价',
+  '腾讯云':'官方计费说明要求登录后查看准确价格；匿名计算器未返回 GPU 单价',
+  '火山引擎':'官方通用队列按量价表（文档 1263500）未列该卡型；其余卡型以 N/A 保留',
+  '智星云':'公开前台未列该卡型的可核验小时价',
+  'AutoDL':'公开型号目录不含价格；匿名市场 API 返回登录超时',
+  '华为云':'该卡型未在匿名公开计算器/接口中返回'
+};
+const specialNa={
+  'H100 NVL':{AWS:'AWS 官方 P5/P5en 本次公开核验未列 H100 NVL；p5en 实为 H200，未以 H100 NVL 计价','IO.net':'登录后目录未见在售 H100 NVL；仅通用 H100 在售，未将其推定为 NVL'},
+  B200:{'IO.net':'登录后目录中的 B200 x1 标为 Sold Out，因此不作为当前在售价格'},
+  B300:{'IO.net':'登录后目录中的 B300 SXM6 AC x1 标为 Sold Out，因此不作为当前在售价格'},
+  'RTX 5090':{'IO.net':'登录后目录中的 GeForce RTX 5090 x1 标为 Sold Out，因此不作为当前在售价格'},
+  'RTX 4090':{'IO.net':'登录后目录中的 GeForce RTX 4090 / 4090 D x1 均标为 Sold Out，因此不作为当前在售价格'},
+  'RTX 3090':{'IO.net':'登录后目录中的 GeForce RTX 3090 x1 标为 Sold Out，因此不作为当前在售价格'},
+  V100:{智星云:'智星云公开前台只列 V100 32G，已置于 V100_32G 行'}
+};
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function entry(g,p){
+  if(p==='我方平台'){
+    const [value,note]=base[g];
+    if(value==='N/A')return {value,status:'na',type:'我方目录',source:'',note:`${note}；星池 starpool.cc 未列该卡型`,unit:'¥/GPU·hr',captured:'2026-09-15（星池实测）'};
+    return d(value,'base','我方基准','',`${note||'按 67 SKU 聚合'}；星池 starpool.cc 实测（67 个 SKU 单卡折算）`,'我方基准','¥/GPU·hr','2026-09-15（星池实测）');
+  }
+  const source=urls[p]||'';
+  return data[g]?.[p]||{value:'N/A',status:'na',type:'官网未列 / 访问受限',source,note:specialNa[g]?.[p]||`${g}：${naReasons[p]||'官网未列可核验价格'}`,unit:'¥/GPU·hr',captured:capturedFor(source)};
+}
+function cell(g,p){
+  const x=entry(g,p);
+  const source=x.source?`<a class="link" href="${esc(x.source)}" target="_blank" rel="noreferrer">来源 ↗</a>`:'来源：用户提供';
+  const detail=[x.type,x.unit].filter(Boolean).join(' · ');
+  const evidence=`<details class="evidence"><summary>来源与证据</summary><span class="meta">${esc(x.note)}</span><span class="meta">${source} · 采集 ${esc(x.captured)}</span></details>`;
+  if(x.status==='na')return `<span class="na">N/A</span><span class="meta">${esc(detail)}</span><span class="tag missing">${esc(x.label||'未公开')}</span>${evidence}`;
+  const tag=x.label||(x.status==='pending'?'⚠️ 待人工确认':x.status==='base'?'我方基准':'官网价');
+  const cls=x.status==='pending'?'pending':'verified';
+  return `<span class="price">${esc(x.value)}</span><span class="meta">${esc(detail)}</span><span class="tag ${cls}">${tag}</span>${evidence}`;
+}
+function render(target,ps){
+  document.getElementById('head'+target).innerHTML='<th scope="col">卡型</th>'+ps.map(p=>`<th scope="col">${p}</th>`).join('');
+  document.getElementById('body'+target).innerHTML=cards.map(g=>`<tr><th scope="row" class="gpu">${g}</th>${ps.map(p=>`<td>${cell(g,p)}</td>`).join('')}</tr>`).join('');
+}
+render('',platforms);render('Over',['我方平台','IO.net','AWS','Google Cloud','Vast.ai','RunPod']);render('China',['我方平台','阿里云','网鼎(立方云)','腾讯云','火山引擎','智星云','AutoDL','华为云']);
+document.getElementById('bodyBase').innerHTML=cards.map(g=>`<tr><th scope="row" class="gpu">${g}</th><td class="price">${base[g][0]}</td><td>${base[g][1]||'按 67 SKU 聚合'}；星池 starpool.cc 实测 · 2026-09-15</td></tr>`).join('');
+const gf=document.getElementById('gpuFilter');cards.forEach(g=>gf.insertAdjacentHTML('beforeend',`<option>${g}</option>`));
+function filter(){const q=document.getElementById('search').value.toLowerCase(),g=gf.value;let visible=0;document.querySelectorAll('tbody').forEach(tb=>tb.querySelectorAll('tr').forEach(tr=>{const ok=(!q||tr.innerText.toLowerCase().includes(q))&&(!g||tr.cells[0]?.innerText===g);tr.style.display=ok?'':'none';if(ok)visible+=1;}));document.getElementById('filterStatus').textContent=`显示 ${visible} 条结果`;}document.getElementById('search').oninput=filter;gf.onchange=filter;
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false');});document.querySelectorAll('.route').forEach(x=>x.classList.remove('active'));b.classList.add('active');b.setAttribute('aria-selected','true');document.getElementById(b.dataset.route).classList.add('active');});
+document.getElementById('gpuCount').textContent=cards.length;const entries=Object.values(data).flatMap(o=>Object.values(o));document.getElementById('verifiedCount').textContent=entries.filter(x=>x.status==='verified').length;
+
+/* ===== 刷新价格（本地服务，需 node server.mjs） ===== */
+const refreshBtn=document.getElementById('refreshBtn');
+// 线上（GitHub Pages 等非本机环境）只能查看：刷新需要本地 node server.mjs 后端
+const HOST_IS_LOCAL=(location.hostname===''||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.hostname==='[::1]');
+if(refreshBtn&&!HOST_IS_LOCAL){
+  refreshBtn.disabled=true;refreshBtn.classList.add('btn-disabled');
+  refreshBtn.textContent='🔄 线上只读快照';
+  refreshBtn.title='这是线上托管版本（如 GitHub Pages），仅供查看；刷新请在本地运行 node server.mjs 后点击。本地刷新后 git push 即会更新此页。';
+}else if(refreshBtn){refreshBtn.onclick=async()=>{
+  const old=refreshBtn.textContent;refreshBtn.disabled=true;refreshBtn.textContent='刷新中…（约 20–40 秒）';
+  try{
+    const r=await fetch('api/refresh',{method:'POST'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.ok===false)throw new Error(j.error||'服务端返回失败');
+    const f=(j.failures||[]).map(x=>x.platform).join('、');
+    alert('✅ 刷新完成\n更新 '+((j.changes||[]).length)+' 个单元格，用时 '+((j.ms||0)/1000).toFixed(1)+'s'+(f?('\n保留基线：'+f):'')+'\n\n已回写 index.html 并保存历史快照。页面将重载。');
+    location.reload();
+  }catch(e){
+    alert('❌ 刷新失败：'+e.message+'\n\n若通过 file:// 直接打开，请先启动本地服务：\n  cd /d "'+''+'"\n  node server.mjs\n再访问 http://localhost:8787');
+    refreshBtn.disabled=false;refreshBtn.textContent=old;
+  }
+};}
+
+/* ===== 历史快照视图 ===== */
+const histCard=document.getElementById('histCard');
+if(histCard){
+  cards.forEach(c=>histCard.insertAdjacentHTML('beforeend','<option>'+c+'</option>'));
+  let SNAPS=[];
+  async function loadHistory(){
+    const meta=document.getElementById('histMeta');
+    let idx=null;
+    try{ idx=await (await fetch('history/index.json',{cache:'no-store'})).json(); }
+    catch(e){ meta.textContent='未找到 history/index.json —— 先启动本地服务并点一次「刷新价格」即可生成快照'; return; }
+    const list=(idx.snapshots||[]);
+    document.getElementById('histList').innerHTML=list.slice().reverse().map(s=>'<tr><td>'+s.ts+'</td><td>'+s.summary.cells+'</td><td>'+s.summary.verified+'</td><td>'+s.summary.pending+'</td><td>'+s.summary.na+'</td><td>'+s.changed+'</td></tr>').join('')||'<tr><td colspan="6">暂无快照</td></tr>';
+    meta.textContent='共 '+list.length+' 个快照 · 最新 '+(list.length?list[list.length-1].ts:'—');
+    const recent=list.slice(-12);
+    SNAPS=(await Promise.all(recent.map(s=>fetch('history/'+s.file,{cache:'no-store'}).then(r=>r.json()).catch(()=>null)))).filter(Boolean);
+    renderTrend();
+  }
+  function renderTrend(){
+    const g=histCard.value,head=document.getElementById('histHead'),body=document.getElementById('histBody');
+    if(!g||!SNAPS.length){head.innerHTML='<th>平台</th>';body.innerHTML='<tr><td>暂无数据</td></tr>';return;}
+    head.innerHTML='<th>平台</th>'+SNAPS.map(s=>'<th>'+(s.ts||'').slice(5,16).replace('T',' ')+'</th>').join('');
+    body.innerHTML=platforms.map(p=>'<tr><th scope="row" class="gpu">'+p+'</th>'+SNAPS.map(s=>{const e=(s.matrix[g]||{})[p];return '<td>'+(e?e.value:'—')+'</td>';}).join('')+'</tr>').join('');
+  }
+  histCard.onchange=renderTrend;
+  document.querySelectorAll('.tab').forEach(b=>{if(b.dataset.route==='history')b.addEventListener('click',loadHistory);});
+  loadHistory();
+}
+
+/* ============================================================
+   价格预警 —— 以我方平台为基准，其他平台取「有报价者的均价」
+   ============================================================ */
+function numOf(s){ // 从价格字符串取代表值：区间取中点，单值取本身，N/A→null
+  if(s==null)return null;
+  const t=String(s);
+  if(/N\/A/i.test(t))return null;
+  const nums=(t.match(/\d+(?:\.\d+)?/g)||[]).map(Number).filter(n=>n>0);
+  if(!nums.length)return null;
+  return nums.length===1?nums[0]:(Math.min.apply(null,nums)+Math.max.apply(null,nums))/2;
+}
+function alertRows(){
+  return cards.map(g=>{
+    const ours=numOf(entry(g,'我方平台').value);
+    const others=platforms.filter(p=>p!=='我方平台').map(p=>numOf(entry(g,p).value)).filter(v=>v!=null);
+    if(ours==null)return {g:g,ours:null,otherAvg:null,n:others.length,diff:null,status:'我方无报价'};
+    if(!others.length)return {g:g,ours:ours,otherAvg:null,n:0,diff:null,status:'其他平台无报价'};
+    const avg=others.reduce((a,b)=>a+b,0)/others.length;
+    const diff=(avg-ours)/ours*100;
+    const status = diff<=-5?'⚠️ 我方高于市场（预警）':(diff>=5?'我方低于市场（优势）':'接近市场');
+    return {g:g,ours:ours,otherAvg:avg,n:others.length,diff:diff,status:status};
+  });
+}
+function fmtY(n){return n==null?'—':'¥'+n.toFixed(2);}
+function renderAlert(){
+  const rows=alertRows().filter(r=>r.ours!=null);
+  rows.sort((a,b)=>{const av=(a.diff==null)?1e9:a.diff,bv=(b.diff==null)?1e9:b.diff;return av-bv;});
+  const warn=rows.filter(r=>r.diff!=null&&r.diff<=-5).length;
+  const good=rows.filter(r=>r.diff!=null&&r.diff>=5).length;
+  document.getElementById('alertMeta').textContent='我方在售 '+rows.length+' 个卡型 · '+warn+' 个高于市场均价 5%+（预警）· '+good+' 个低于市场 5%+（优势）';
+  document.getElementById('alertBody').innerHTML=rows.map(r=>{
+    const cls=r.diff==null?'':(r.diff<=-5?'warn':(r.diff>=5?'good':''));
+    const pct=r.diff==null?'—':((r.diff>0?'+':'')+r.diff.toFixed(1)+'%');
+    return '<tr><th scope="row" class="gpu">'+r.g+'</th><td>'+fmtY(r.ours)+'</td><td>'+r.n+'</td><td>'+fmtY(r.otherAvg)+'</td><td class="'+cls+'">'+pct+'</td><td>'+(r.diff==null?'':r.status)+'</td></tr>';
+  }).join('');
+}
+const alertTab=document.querySelector('.tab[data-route="alert"]');
+if(alertTab)alertTab.addEventListener('click',renderAlert);
+renderAlert();
+
+/* ============================================================
+   导出 Excel（纯前端生成 .xlsx：STORED 方式打包 ZIP，无外部依赖）
+   ============================================================ */
+const XLSX_CRC=(function(){const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(u8){let c=0xFFFFFFFF;for(let i=0;i<u8.length;i++)c=XLSX_CRC[(c^u8[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function cat(arr){let n=0;for(let i=0;i<arr.length;i++)n+=arr[i].length;const r=new Uint8Array(n);let o=0;for(let i=0;i<arr.length;i++){r.set(arr[i],o);o+=arr[i].length;}return r;}
+function u16(n){const b=new Uint8Array(2);new DataView(b.buffer).setUint16(0,n,true);return b;}
+function u32(n){const b=new Uint8Array(4);new DataView(b.buffer).setUint32(0,n,true);return b;}
+function zipStore(files){
+  const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  files.forEach(function(f){
+    const name=enc.encode(f.name);
+    const data=(f.data instanceof Uint8Array)?f.data:enc.encode(f.data);
+    const crc=crc32(data),sz=data.length;
+    parts.push(u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(sz),u32(sz),u16(name.length),u16(0),name,data);
+    cen.push(u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(sz),u32(sz),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off),name);
+    off+=30+name.length+sz;
+  });
+  const cenBuf=cat(cen);
+  return cat([cat(parts),cenBuf,u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cenBuf.length),u32(off),u16(0)]);
+}
+function colName(i){let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=(i-m-1)/26;}return s;}
+function xe(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sheetXml(rows){
+  let x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>';
+  rows.forEach(function(row,ri){
+    x+='<row r="'+(ri+1)+'">';
+    row.forEach(function(cell,ci){
+      const ref=colName(ci)+(ri+1),v=(cell==null?'':String(cell));
+      if(v!==''&&/^-?\d+(\.\d+)?$/.test(v))x+='<c r="'+ref+'"><v>'+v+'</v></c>';
+      else x+='<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+xe(v)+'</t></is></c>';
+    });
+    x+='</row>';
+  });
+  return x+'</sheetData></worksheet>';
+}
+function buildXlsx(sheets){
+  const files=[];
+  files.push({name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+sheets.map(function(s,i){return '<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';}).join('')+'</Types>'});
+  files.push({name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'});
+  files.push({name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map(function(s,i){return '<sheet name="'+xe(s.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>';}).join('')+'</sheets></workbook>'});
+  files.push({name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map(function(s,i){return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>';}).join('')+'</Relationships>'});
+  sheets.forEach(function(s,i){files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:sheetXml(s.rows)});});
+  return zipStore(files);
+}
+function exportXlsx(){
+  const A=alertRows();
+  const m=[['卡型'].concat(platforms)];
+  cards.forEach(function(g){m.push([g].concat(platforms.map(function(p){return entry(g,p).value;})));});
+  const al=[['卡型','我方平台','覆盖平台数','其他平台均价','其他高出我方%','状态']];
+  A.filter(function(r){return r.ours!=null;}).sort(function(a,b){const av=(a.diff==null)?1e9:a.diff,bv=(b.diff==null)?1e9:b.diff;return av-bv;}).forEach(function(r){
+    al.push([r.g,r.ours.toFixed(2),r.n,(r.otherAvg==null?'':r.otherAvg.toFixed(2)),(r.diff==null?'':r.diff.toFixed(1)),r.status]);
+  });
+  const src=[['卡型','平台','价格','状态','计费类型','单位','来源','采集时间']];
+  cards.forEach(function(g){platforms.forEach(function(p){const e=entry(g,p);src.push([g,p,e.value,e.status,e.type,e.unit,e.source,e.captured]);});});
+  const wb=buildXlsx([{name:'价格矩阵',rows:m},{name:'价格预警',rows:al},{name:'来源明细',rows:src}]);
+  const blob=new Blob([wb],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='GPU价格矩阵_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+const exportBtn=document.getElementById('exportBtn');
+if(exportBtn)exportBtn.onclick=exportXlsx;
+</script>
+</body></html>

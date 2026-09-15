@@ -1,0 +1,24 @@
+# 依赖与产物
+node_modules/
+*.log
+
+# 临时文件
+.tmp/
+*.tmp
+~$*
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地刷新时的临时输出（快照 history/ 要保留并提交，勿忽略）
+refresh.last.json
+
+# 旁支文件（华为 ModelArts 相关，不属于本 GPU 价格看板，不入库）
+_hw*
+_huawei*
+
+# 注意：
+#   history/ 目录刻意不忽略——历史价格快照要提交到 GitHub 做备份
+#   .nojekyll 必须保留（GitHub Pages 用）
