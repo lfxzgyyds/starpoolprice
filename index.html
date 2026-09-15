@@ -19,12 +19,12 @@
 <section id="china" class="panel route" role="tabpanel"><div class="panel-head"><h2>中国路线 · 7 家 + 我方基准</h2><span class="note">官网未公开 / 登录或配额路径未返回价格时保留 N/A</span></div><div class="table-wrap" tabindex="0" aria-label="中国价格矩阵，可横向滚动"><table><caption class="sr-only">中国 GPU 云平台价格对比</caption><thead><tr id="headChina"></tr></thead><tbody id="bodyChina"></tbody></table></div></section>
 <section id="base" class="panel route" role="tabpanel"><div class="panel-head"><h2>我方平台基准明细</h2><span class="note">星池 starpool.cc 67 SKU 按卡型聚合（单卡价 = 整机时租 ÷ 卡数），区间保留内部价差 · 2026-09-15 实测</span></div><div class="table-wrap" tabindex="0" aria-label="我方平台基准明细，可横向滚动"><table><caption class="sr-only">我方平台 67 SKU 聚合基准</caption><thead><tr><th scope="col">卡型</th><th scope="col">单卡价格（¥/GPU·hr）</th><th scope="col">备注</th></tr></thead><tbody id="bodyBase"></tbody></table></div></section>
 <section id="history" class="panel route" role="tabpanel"><div class="panel-head"><h2>历史快照 · 本地存档</h2><span class="note" id="histMeta">加载中…</span></div><div class="hist-body"><div class="toolbar" style="margin:0 0 10px"><label for="histCard">卡型走势：</label><select id="histCard"></select><span class="note">每次刷新在 <code>history/</code> 落一个 JSON 快照，可 git 提交到 GitHub 备份</span></div><div class="table-wrap"><table class="trend"><thead><tr id="histHead"></tr></thead><tbody id="histBody"></tbody></table></div><h3>快照清单</h3><div class="table-wrap"><table><thead><tr><th>时间</th><th>单元格</th><th>已核验</th><th>待重核</th><th>N/A</th><th>变化</th></tr></thead><tbody id="histList"></tbody></table></div></div></section>
-<section id="alert" class="panel route" role="tabpanel"><div class="panel-head"><h2>价格预警 · 以我方平台为基准</h2><span class="note" id="alertMeta">计算中…</span></div><div class="hist-body"><div class="alert-note"><b>口径：</b>以「我方平台」单卡价为基准；「其他平台均价」= 所有<b>有报价</b>平台（不含我方平台、不含 N/A）单卡价的算术平均数，区间价取中点。<b>「其他高出我方%」=（其他平台均价 − 我方平台）÷ 我方平台 × 100%</b>：正值表示市场比我方贵（我方有价格优势），负值表示市场比我方便宜（<span class="warn">预警</span>，阈值 ±5%）。</div><div class="table-wrap"><table class="alert-table"><thead><tr><th>卡型</th><th>我方平台</th><th>覆盖平台数</th><th>其他平台均价</th><th>其他高出我方%</th><th>状态</th></tr></thead><tbody id="alertBody"></tbody></table></div></div></section>
+<section id="alert" class="panel route" role="tabpanel"><div class="panel-head"><h2>价格预警 · 仅对比国内平台</h2><span class="note" id="alertMeta">计算中…</span></div><div class="hist-body"><div class="alert-note"><b>口径：</b>以「我方平台」单卡价为基准，<b>只横向对比国内平台</b>（阿里云 / 网鼎立方云 / 腾讯云 / 火山引擎 / 智星云 / AutoDL / 华为云）——<b>海外平台不参与预警</b>。「国内平台均价」= 上述国内平台中<b>有报价</b>者单卡价的算术平均数（不含我方平台、不含 N/A），区间价取中点。<b>「国内高出我方%」=（国内平台均价 − 我方平台）÷ 我方平台 × 100%</b>：正值表示国内同行比我方贵（我方有价格优势），负值表示国内同行比我方便宜（<span class="warn">预警</span>，阈值 ±5%）。</div><div class="table-wrap"><table class="alert-table"><thead><tr><th>卡型</th><th>我方平台</th><th>国内覆盖数</th><th>国内平台均价</th><th>国内高出我方%</th><th>状态</th></tr></thead><tbody id="alertBody"></tbody></table></div></div></section>
 <div class="footer">数据口径来自用户提供的《GPU价格对比任务规范.md》。海外换算采用 <a class="link" href="https://open.er-api.com/v6/latest/USD" target="_blank" rel="noreferrer">USD/CNY 6.7156</a>（2026-09-14 公开 API 交叉复核）。我方平台列为星池 starpool.cc 67 个 SKU 单卡折算（2026-09-15 实测）。每个单元格都显示来源、计费类型与采集时间；N/A 仍保留对应官网入口与事实原因。NVIDIA 行为 ¥/GPU·hr；昇腾为 ¥/NPU·hr，T4 虚拟分片不纳入矩阵。⚠️ 表示动态市场价、特殊计费或型号命名待确认。</div>
 </main>
 <script>
 const platforms=['我方平台','IO.net','AWS','Google Cloud','Vast.ai','RunPod','阿里云','网鼎(立方云)','腾讯云','火山引擎','智星云','AutoDL','华为云'];
-const cards=['H100','H100 NVL','H200','B200','B300','A100','L40S','L40','L4','RTX 6000 Ada','6000 ADA','A6000','T4','V100','V100_32G','L20','H20','RTX 5090','RTX 4090','RTX 3090','A800','PRO 6000 BLACKWELL','RTX PRO 6000','A40','A30','GAUDI2','昇腾 310','昇腾 910B','昇腾 910C?/Snt9c','昇腾 910/D910'];
+const cards=['H100','H100 NVL','H200','B200','B300','A100','L40S','L40','L4','A10','RTX 6000 Ada','6000 ADA','A6000','T4','V100','V100_32G','L20','H20','RTX 5090','RTX 4090','RTX 3090','A800','PRO 6000 BLACKWELL','RTX PRO 6000','A40','A30','GAUDI2','昇腾 310','昇腾 910B','昇腾 910C?/Snt9c','昇腾 910/D910'];
 const urls={'IO.net':'https://cloud.io.net/cloud/virtual-machines','AWS':'https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json','Google Cloud':'https://cloud.google.com/products/compute/pricing/accelerator-optimized','Vast.ai':'https://vast.ai/','RunPod':'https://www.runpod.io/pricing','阿里云':'https://www.aliyun.com/price/product#/ecs','网鼎(立方云)':'https://www.lifangyun.com/api/v1/home/compute-instances/display','腾讯云':'https://cloud.tencent.com/document/product/560/8025','火山引擎':'https://www.volcengine.com/product/gpucloud','智星云':'https://ai-galaxy.cn/','AutoDL':'https://www.autodl.com/api/v1/machine/gpu_type','华为云':'https://www.huaweicloud.com/pricing/calculator.html#/ecs'};
 const fxRate=6.7156;
 const fxSource='https://open.er-api.com/v6/latest/USD';
@@ -51,174 +51,224 @@ const sourceTimes={
 const sourceTime='2026-09-14（本次匿名公开采集）';
 const capturedFor=source=>sourceTimes[source]||sourceTime;
 const baseValues={
-  H100:['¥25.01–41.83','星池实测（同卡型内部价差大）'],H200:['¥36.40–48.30','星池实测'],B200:['N/A','我方目录未列'],B300:['N/A','我方目录未列'],A100:['¥12.40–21.56','星池实测（含 DGX A100）'],L40S:['¥8.07–18.79','星池实测（批量 x4/x8 与单卡价差大）'],L40:['¥6.36','星池实测'],L4:['¥10.01–10.64','星池实测'],A6000:['¥4.74','星池实测'],T4:['¥4.54','星池实测'],V100:['¥12.11–15.13','星池实测（另有 1 条异常低价 ¥1.83）'],V100_32G:['¥23.60','星池实测'],L20:['N/A','我方目录未列'],H20:['N/A','我方目录未列'], 'RTX 6000 Ada':['¥9.78–9.79','星池实测（RTX6000Ada 组）'], '6000 ADA':['¥6.55–6.56','星池实测（与 RTX6000Ada 并列的独立型号组）'], 'PRO 6000 BLACKWELL':['¥20.07','星池实测'], 'RTX PRO 6000':['¥19.13–34.38','星池实测（RTXPro6000/RTXPRO6000 命名变体）'],A40:['¥14.53–14.60','星池实测'],A30:['¥13.62–18.91','星池实测'],GAUDI2:['¥11.09','Intel Gaudi 2 加速器（星池 GAUDI2x8 整机 ¥88.74 ÷8）'], '昇腾 310':['N/A','我方目录未列'], '昇腾 910B':['N/A','我方目录未列'], '昇腾 910C?/Snt9c':['N/A','我方目录未列'], '昇腾 910/D910':['N/A','我方目录未列'], 'H100 NVL':['N/A','我方目录未列']
+  H100:['¥25.01–41.83','星池实测（同卡型内部价差大）'],H200:['¥36.40–48.30','星池实测'],B200:['N/A','我方目录未列'],B300:['N/A','我方目录未列'],A100:['¥12.40–21.56','星池实测（含 DGX A100）'],L40S:['¥8.07–18.79','星池实测（批量 x4/x8 与单卡价差大）'],L40:['¥6.36','星池实测'],L4:['¥10.01–10.64','星池实测'],A10:['N/A','我方目录未列'],A6000:['¥4.74','星池实测'],T4:['¥4.54','星池实测'],V100:['¥12.11–15.13','星池实测（另有 1 条异常低价 ¥1.83）'],V100_32G:['¥23.60','星池实测'],L20:['N/A','我方目录未列'],H20:['N/A','我方目录未列'], 'RTX 6000 Ada':['¥9.78–9.79','星池实测（RTX6000Ada 组）'], '6000 ADA':['¥6.55–6.56','星池实测（与 RTX6000Ada 并列的独立型号组）'], 'PRO 6000 BLACKWELL':['¥20.07','星池实测'], 'RTX PRO 6000':['¥19.13–34.38','星池实测（RTXPro6000/RTXPRO6000 命名变体）'],A40:['¥14.53–14.60','星池实测'],A30:['¥13.62–18.91','星池实测'],GAUDI2:['¥11.09','Intel Gaudi 2 加速器（星池 GAUDI2x8 整机 ¥88.74 ÷8）'], '昇腾 310':['N/A','我方目录未列'], '昇腾 910B':['N/A','我方目录未列'], '昇腾 910C?/Snt9c':['N/A','我方目录未列'], '昇腾 910/D910':['N/A','我方目录未列'], 'H100 NVL':['N/A','我方目录未列']
 };
 const base={}; cards.forEach(g=>base[g]=baseValues[g]||['N/A','我方目录未列']);
 const d=(value,status='verified',type='on-demand',source='',note='',label='',unit='¥/GPU·hr',captured=capturedFor(source))=>({value,status,type,source,note,label,unit,captured});
 const data={
   "H100":{
-    "IO.net":d("¥17.46–26.80","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后 Virtual Machine 目录的在售 H100：x1、80 GB，US $2.60/hr 与 Finland $3.99/hr；均为单卡实例，USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "AWS":d("¥46.20","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p5.48xlarge：8×H100，$55.04/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "IO.net":d("¥17.49–29.24","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API（api.io.solutions/v1/io-cloud/vmaas/hardware，共 88 条）：H100 80G 在售 7 条（x1/x2/x4/x8，FI/FR/US），$2.6040–4.3539/卡·hr。IO.net 另有 H100 80GB HBM3 / H100 PCIe 条目但均 Sold Out；未见 H100 NVL","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举；USD/CNY=6.7156）"),
+    "AWS":d("¥46.20","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p5.48xlarge：8×H100 80G，$55.04/实例·hr ÷8=$6.88→¥46.20（另有 p5.4xlarge 单卡实例，折算价更高）。AWS 目录未见 H100 NVL","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
     "Google Cloud":d("¥74.28–78.41","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A3 High/Mega：8×H100，完整 VM 总价÷8；$11.0613–11.6751/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
-    "Vast.ai":d("⚠️ ¥13.45–17.92起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=gh200Sxm%2Ch100Nvl%2Ch100Pcie%2Ch100Sxm","公开 UI 动态挂单：H100 PCIe/SXM；带宽另计，随宿主变化","社区参考价","¥/GPU·hr","2026-09-14T15:38:58+08:00"),
-    "RunPod":d("¥13.36","verified","Community / Secure on-demand","https://www.runpod.io/pricing","Rent H100 $1.99/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "Vast.ai":d("⚠️ ¥11.62–14.71起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页「Live GPU Prices」全量枚举：H100 SXM from $1.73/hr、H100 PCIE from $2.00/hr、H100 NVL from $2.19/hr；中位数 $2.27–2.91/hr。宽带上行/下行另计，随宿主变化","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举；USD/CNY=6.7156）"),
+    "RunPod":d("¥13.36","verified","Community / Secure on-demand","https://www.runpod.io/pricing","Rent H100 $1.99/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "网鼎(立方云)":d("⚠️ 需询价","pending","官网在售但无公开价","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网首页 API 列有「H100 80G SXM5 · 8 张 · 包月」，price 字段为 \"???\"，按钮为「获取报价」；官网页无价格计算器，需联系销售获取报价","无公开报价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）")
   },
   "H100 NVL":{
     "IO.net":d("N/A","na","官网未列","https://cloud.io.net/cloud/virtual-machines","登录后目录未见在售 H100 NVL；仅通用 H100 在售，未将其推定为 NVL","官网未列","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "Vast.ai":d("⚠️ ¥17.41起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=gh200Sxm%2Ch100Nvl%2Ch100Pcie%2Ch100Sxm","公开 UI 1×H100 NVL 动态挂单 $2.592/hr；带宽另计","社区参考价","¥/GPU·hr","2026-09-14T15:38:58+08:00"),
+    "Vast.ai":d("⚠️ ¥14.71起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：H100 NVL from $2.19/hr，median $2.91/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
     "RunPod":d("¥17.39–21.42","verified","Community / Secure on-demand","https://www.runpod.io/pricing","H100 NVL 单列 SKU，$2.59–3.19/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
   },
   "H200":{
-    "IO.net":d("¥25.45–33.51","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后 Virtual Machine 目录的在售 H200：x1、141 GB，US $3.79/hr 与 Finland $4.99/hr；均为单卡实例，USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "AWS":d("¥53.13","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p5en.48xlarge：8×H200，$63.296/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "IO.net":d("¥25.46–33.77","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：H200 140G 在售 6 条（x1/x2/x4，US/FI，另 1 条售罄），$3.7905–5.0294/卡·hr","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "AWS":d("¥53.13","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p5en.48xlarge：8×H200 141G，$63.296/实例·hr ÷8=$7.912→¥53.13；p5e.48xlarge 同族（8×H200）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
     "Google Cloud":d("¥71.19","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A3 Ultra：8×H200，完整 VM 总价÷8；$10.6009/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
-    "Vast.ai":d("¥26.73起","pending","社区参考价","https://cloud.vast.ai/?gpuModelNames=h200Sxm","公开 UI 动态挂单首条 1×H200 $3.980/hr；带宽另计，随宿主变化","社区参考价","¥/GPU·hr","2026-09-14T15:08:50+08:00"),
-    "RunPod":d("¥24.11","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand H200 $3.59/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "Vast.ai":d("⚠️ ¥13.23–17.46起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：H200 from $1.97/hr（median $3.46）、H200 NVL from $2.60/hr（median $3.97）（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "RunPod":d("¥24.11","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand H200 $3.59/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "网鼎(立方云)":d("⚠️ 需询价","pending","官网在售但无公开价","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网首页 API 列有「NVIDIA H200 141GB · 8 张 · 包月」，price 字段为 \"???\"，按钮为「获取报价」；需联系销售获取报价","无公开报价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）")
   },
   "B200":{
-    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 B200 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "AWS":d("¥95.64","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p6-b200.48xlarge：8×B200，$113.9328/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：B200 192G 仅 1 条且 Sold Out，不作为当前可购买价","已售罄","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "AWS":d("¥95.64","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p6-b200.48xlarge：8×NVIDIA Blackwell B200（1432 GB 显存），$113.9328/实例·hr ÷8=$14.2416→¥95.64","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
     "Google Cloud":d("⚠️ ¥54.09","pending","DWS Flex Start（非 on-demand）","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A4 $64.44/8 GPU；官方按需价为不适用，不与 on-demand 并列","特殊价","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
-    "RunPod":d("¥40.16–45.60","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B200，$5.98–6.79/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
+    "RunPod":d("¥40.16–45.60","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B200，$5.98–6.79/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST"),
+    "Vast.ai":d("⚠️ ¥37.81起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：B200 from $5.63/hr，median $7.75/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）")
   },
   "B300":{
-    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 B300 SXM6 AC x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "RunPod":d("¥46.61–52.99","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B300，$6.94–7.89/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST")
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：B300 SXM6 AC（275G）仅 1 条且 Sold Out，不作为当前可购买价","已售罄","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "RunPod":d("¥46.61–52.99","verified","Community / Secure on-demand","https://www.runpod.io/pricing","B300，$6.94–7.89/GPU·hr","","¥/GPU·hr","2026-09-14 14:15–14:32 CST"),
+    "Vast.ai":d("⚠️ ¥50.37起","pending","社区参考价（示意价，无实时挂单）","https://vast.ai/pricing","官方定价页：B300 ~$7.50/hr recent market，页面明示「No current offers — indicative price, not a live offer」，即当前无实时挂牌，为近期市场示意价（×6.7156）","示意价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥119.55","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p6-b300.48xlarge：8×NVIDIA Blackwell Ultra B300，$142.416/实例·hr ÷8=$17.802→¥119.55（AWS 官方文档标明 8×B300、2144 GB 显存）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）")
   },
   "A100":{
-    "IO.net":d("¥8.67–14.84","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A100（80 GB）：US x8 $10.33/hr ÷8 = $1.29125/GPU·hr；India x1 $2.21/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "AWS":d("¥18.43","verified","on-demand","https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20260910195514/us-east-1/index.json","us-east-1 · p4d.24xlarge：8×A100，$21.957642/实例·hr ÷8 ×6.7156","","¥/GPU·hr","2026-09-14T14:21:41+08:00（公开目录采集；目录快照 2026-09-10T19:55:14Z）"),
+    "IO.net":d("¥8.67–13.96","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：A100 80G 在售 6 条（x1/x2/x4/x8，US/IN），$1.2915–2.0790/卡·hr；另有 DGX A100 80G 8 卡（$1.3125/卡）；A100-SXM4-80GB / A100-PCIE-40GB / A100-SXM4-40GB / A100 80GB PCIe 四条均 Sold Out","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "AWS":d("¥18.43–23.04","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · Linux on-demand 全量枚举 68 个 GPU 实例：p4d.24xlarge 8×A100 40G $21.957642/实例·hr ÷8=$2.7447→¥18.43；p4de.24xlarge 8×A100 80G $27.44705÷8=$3.4309→¥23.04","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举；USD/CNY=6.7156）"),
     "Google Cloud":d("¥23.40–34.04","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· A2 Standard/Ultra/Mega：完整 VM 总价÷GPU 数；$3.4837–5.0688/GPU·hr","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
     "RunPod":d("¥7.99","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand A100 $1.19/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "智星云":d("¥8.00","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A100 80G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "智星云":d("¥2.75–8.00","verified","按小时（官网下单前明码价）","https://gpu.ai-galaxy.com/store","官网算力市场：A100-SXM4-40GB ¥2.75/小时、A100-SXM4-80GB ¥8.00/小时","","¥/GPU·hr","2026-09-15T14:55+08:00"),
     "阿里云":d("¥34.74","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn7e-c16g1.4xlarge = 1×A100 80G（16vCPU/125GiB），按量目录价 ¥34.742/实例·小时 ÷1 = ¥34.74/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
     "火山引擎":d("¥50.4","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A100*1，50.4 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "腾讯云":d("¥26.97","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GT4.4XLARGE96 = 1×A100 40G（NVLink），16核96GB；官网价格计算器按量T1官网优惠价 ¥26.97/实例·小时 ÷1 = ¥26.97/卡·小时（广州/重庆同价，2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
-    "AutoDL":d("⚠️ ¥3.28","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","A100 PCIe 40G ¥3.28/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：无 A100 专区（仅 V100/A800/L20/摩尔线程专区），GPU型号筛选亦无 A100，在售视图 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+    "腾讯云":d("¥28.64","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GT4.4XLARGE96 = 1×A100 40G（NVLink），16核96GB；官网价格计算器「GPU机型」全量枚举，按量T1官网优惠价 ¥28.64/实例·小时 ÷1 = ¥28.64/卡·小时（广州·regionId=1；同族 GT4.8XLARGE192 ¥57.28、GT4.20XLARGE474 ¥118.75、GT4.41XLARGE948 ¥237.51）。注：更正此前往返误记的 ¥26.97，本次为全量枚举复核值","官网计算器价","¥/GPU·hr","2026-09-15T15:10+08:00（GPU机型目录全量枚举）"),
+    "AutoDL":d("¥3.28","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","A100-PCIE-40GB 原价 ¥3.45/卡·小时，会员 9.5 折 ¥3.28；2026-09-15 登录后调用官网机器列表接口全量枚举（3311 台机器），A100-PCIE-40GB 共 27 台 / 13 张空闲卡。此前误判为「无 A100」已更正","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "网鼎(立方云)":d("⚠️ 需询价","pending","官网在售但无公开价","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网在售两档：GPU容器「多卡实例 NVIDIA A100 80 GB × 8 张 / 128 核 / 1TB」，以及首页 API「A100 80G SXM · 8 张 · 包月」，price 字段为 \"???\"，需「获取报价」。2026-09-15 官网 API + 产品页全量枚举","无公开报价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）"),
+    "Vast.ai":d("⚠️ ¥1.81–6.11起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：A100 PCIE 80GB from $0.27/hr（median $0.80）、A100 SXM4 80GB from $0.34/hr（median $0.91）（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）")
   },
   "L40S":{
-    "IO.net":d("¥5.64","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 L40S、48 GB，$0.84/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "IO.net":d("¥5.64","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：L40S 48G 在售 x1/x2/x4/x8，$0.8400/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "Vast.ai":d("⚠️ ¥3.16–5.37起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：L40S 48GB from $0.47/hr，median $0.80/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥12.50","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · g6e.xlarge = 1×L40S 48G，$1.861/实例·hr ÷1→¥12.50（g6e 全系 1 卡基准同为 $1.861）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）")
   },
   "L40":{
-    "IO.net":d("¥4.43","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 L40、48 GB，$0.66/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("¥4.44","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：L40 48G 在售 x1/x2/x4，$0.6615/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "腾讯云":d("⚠️ ¥8","pending","按量计费（第三方引用官方价，待登录复核）","https://cloud.tencent.com/document/product/560/8025","L40 机型按量计费 ¥8/实例·小时 ÷1；2026-09-15 登录官网价格计算器核验：GPU机型分类未列 L40，保留第三方引用价","待官网复核","¥/GPU·hr","2026-09-15（第三方价表快照，待登录复核）")
+    "腾讯云":d("⚠️ 官网未列","pending","GPU机型目录未列该卡型","https://buy.cloud.tencent.com/price/cvm/calculator","2026-09-15 全量枚举腾讯云价格计算器「GPU机型」分类（广州）全部在售机型：公开 GPU 仅 P4/GN6S、P40/GN8、T4/GN7+GI3X、V100/GN10X+GN10Xp、A100/GT4 五类，未列 L40；原第三方引用价 ¥8 无官方出处，已撤下","无官方公开报价","¥/GPU·hr","2026-09-15T15:10+08:00（GPU机型目录全量枚举）"),
+    "Vast.ai":d("⚠️ ¥2.22–2.28起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：L40 48GB from $0.33/hr，median $0.34/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）")
   },
   "L4":{
-    "IO.net":d("¥7.08–7.45","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 L4（24 GB）：Poland x4 $4.22/hr ÷4 = $1.055/GPU·hr；US/France/Poland x1 均 $1.11/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "Google Cloud":d("¥4.75–11.65","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· G2 完整 VM 总价÷GPU 数；1×L4 SKU 的 CPU/内存不同","","¥/GPU·hr","2026-09-14 15:23–15:28 CST"),
+    "IO.net":d("¥7.00–7.44","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：L4 24G 在售 7 条（x1/x2/x4/x8，PL/FR），$1.0419–1.1073/卡·hr","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "Google Cloud":d("¥4.75–11.65","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· G2 系列全量枚举 8 个规格，按 1 卡折算：g2-standard-4 $0.7068（最低）、-8 $0.8536、-12 $1.0004、-16 $1.1472、-32 $1.7344（最高）；-24/-48/-96 为 2/4/8 卡，折算均 $1.0004/卡。×6.7156 → ¥4.75–11.65","","¥/GPU·hr","2026-09-15T16:15+08:00（官方定价页全量枚举）"),
     "RunPod":d("¥5.31","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand L40S $0.79/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
     "火山引擎":d("¥8.06","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：L4*1，8.06 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "阿里云":d("¥9.53","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn7i-c8g1.2xlarge = 1×L4 24G（8vCPU/30GiB），按量目录价 ¥9.5326/实例·小时 ÷1 = ¥9.53/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "Vast.ai":d("⚠️ ¥0.87–2.22起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：L4 24GB from $0.13/hr，median $0.33/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥1.36–5.40","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 全量枚举 L4 全系 1 卡基准：g6f.large $0.202→¥1.36（最低）、g6.xlarge $0.8048→¥5.40、gr6f.4xlarge $1.066→¥7.16、gr6.4xlarge $1.5392→¥10.34（g6/gr6 均为 1×L4 24G）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）")
+  },
+  "A10":{
+    "阿里云":d("¥9.53","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn7i-c8g1.2xlarge = 1×A10 24G（8vCPU/30GiB），按量目录价 ¥9.5326/实例·小时 ÷1 = ¥9.53/卡·小时（中国大陆区）。注：阿里云 gn7i 官方型号为 NVIDIA A10（非 L4）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T14:55+08:00"),
+    "火山引擎":d("¥4.55","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A10*1，4.55 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T14:55+08:00"),
+    "Vast.ai":d("⚠️ ¥1.34起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：A10 24GB from $0.20/hr（未标注 median）（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥6.76","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · g5.xlarge = 1×NVIDIA A10G（AWS 定制版 A10、24G），$1.006/实例·hr ÷1→¥6.76。AWS 目录中显卡名为 A10G","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）")
   },
   "RTX 6000 Ada":{
-    "IO.net":d("¥6.85","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 RTX6000Ada、48 GB，$1.02/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("¥6.84","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：RTX6000Ada 48G 在售 x1/x2/x4，$1.0185/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "RunPod":d("¥4.97","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand RTX 6000 Ada $0.74/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
   },
+  "6000 ADA":{
+    "IO.net":d("¥4.58","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：IO.net 目录中另有独立型号「6000 ADA」（48G，区别于 RTX6000Ada），在售 x1/x2/x4/x8，$0.6825/卡·hr（US）→ 此前看板为 N/A，本轮补齐","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）")
+  },
   "A6000":{
-    "IO.net":d("¥3.29","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 A6000、48 GB，$0.49/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("¥3.31","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：A6000 48G 在售 x1/x2/x4/x8，$0.4935/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "RunPod":d("¥2.22","verified","Community / Secure on-demand","https://www.runpod.io/pricing","RTX A6000 $0.33/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "智星云":d("¥2.40","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX A6000 48G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST")
+    "智星云":d("¥2.40","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX A6000 48G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "Vast.ai":d("⚠️ ¥1.95–2.75起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：RTX A6000 48GB from $0.29/hr，median $0.41/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）")
   },
   "T4":{
-    "IO.net":d("¥3.16","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：India x1 T4、16 GB，$0.47/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "华为云":d("¥6.33","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· g6.xlarge.4.linux：1×NVIDIA T4 16G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "IO.net":d("¥3.17","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：T4 16G 在售 x1/x2，$0.4725/卡·hr（IN）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "华为云":d("¥6.33","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· g6.xlarge.4 = 1×NVIDIA T4 16G，按需 ¥6.33/实例·小时 ÷1。同族 1 卡基准：g6.4xlarge.4 ¥8.98、g6.6xlarge.4 ¥10.75、g6.9xlarge.7 ¥16.25、pi2.2xlarge.4 ¥7.322；vGPU 版 g6v 2Q(2G) ¥2.40 / 4Q(4G) ¥3.41 / 8Q(8G) ¥6.83；贵阳一（cn-southwest-2）g6.xlarge.4 ¥5.728 为全地域最低。2026-09-15 跨 16 地域全量枚举","计算器选配","¥/GPU·hr","2026-09-15T15:35+08:00（跨地域全量枚举）"),
     "火山引擎":d("¥7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：T4*1，7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "腾讯云":d("¥8.68","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GN7.2XLARGE32 = 1×T4（实为 8核32GB），官网价格计算器按量T1 ¥8.68/实例·小时 ÷1 = ¥8.68/卡·小时（第三方快照 ¥1.2 偏低，已按官网计算器校正，2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
-    "阿里云":d("¥11.63","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6i-c4g1.xlarge = 1×T4 16G（4vCPU/15GiB），按量目录价 ¥11.63/实例·小时 ÷1 = ¥11.63/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "腾讯云":d("¥8.68","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GN7.2XLARGE32 = 1×T4（8核32GB），官网价格计算器「GPU机型」按量T1官网优惠价 ¥8.68/实例·小时 ÷1 = ¥8.68/卡·小时（广州）。同卡型其他 1 卡基准：GN7.5XLARGE80 ¥13.89、GN7.8XLARGE128 ¥19.10、推理型 GI3X.8XLARGE ¥9.58，取最低 ¥8.68","官网计算器价","¥/GPU·hr","2026-09-15T15:10+08:00（GPU机型目录全量枚举）"),
+    "阿里云":d("¥11.63","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6i-c4g1.xlarge = 1×T4 16G（4vCPU/15GiB），按量目录价 ¥11.63/实例·小时 ÷1 = ¥11.63/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("¥0.78","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","Tesla T4 原价 ¥0.82/卡·小时，会员 9.5 折 ¥0.78；2026-09-15 官网机器列表接口全量枚举，Tesla T4 共 8 台（4 卡机）/ 1 张空闲卡","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "Vast.ai":d("⚠️ ¥0.54–1.01起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：Tesla T4 16GB from $0.08/hr，median $0.15/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥3.53","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · g4dn.xlarge = 1×T4 16G，$0.526/实例·hr ÷1=$0.526→¥3.53（g4dn 全系 1 卡基准同为 $0.526）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
+    "Google Cloud":d("¥2.35","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· N1 + NVIDIA T4 16G，on-demand $0.35/GPU·hr ×6.7156 = ¥2.35（全量枚举页面 GPU 表：T4/P4/V100/P100/L4/G4 等）","","¥/GPU·hr","2026-09-15T16:15+08:00（官方定价页全量枚举）")
   },
   "V100":{
-    "IO.net":d("¥8.46–10.58","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 V100（India、32 GB）：x1 $1.57/hr、x2 $2.52/hr ÷2、x4 $6.30/hr ÷4；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "华为云":d("¥16.44–17.26","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· V100-PCIe-32G ¥16.44、V100-SXM2-32G ¥17.259；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "IO.net":d("¥1.28–10.58","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：V100 16G 在售 4 条（x1/x2/x4/x8，IN/FI），$0.1903–1.5750/卡·hr（低价条为印度区 1 卡档）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "华为云":d("¥16.44–21.93","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· 1×V100-16G 基准：p2v.2xlarge.8 ¥16.44、g5.8xlarge.4（V100-16Q 16G）¥21.93；vGPU 切片 g5.4xlarge.4（V100-8Q 8G）¥10.97。32G 全卡见 V100_32G 行。2026-09-15 跨 16 地域全量枚举","计算器选配","¥/GPU·hr","2026-09-15T15:35+08:00（跨地域全量枚举）"),
     "火山引擎":d("¥14.7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：V100*1，14.7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥1.10","verified","按小时（官网下单前明码价）","https://gpu.ai-galaxy.com/store","Tesla V100-16GB (16G) ¥1.10/小时（V100 16G 版；32G 版见 V100_32G 行）","","¥/GPU·hr","2026-09-15T14:55+08:00"),
+    "腾讯云":d("¥11.98–18.04","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","腾讯云有两个 V100 规格族的 1 卡基准（均为 1×V100 32G NVLink）：GN10Xp.2XLARGE40 ¥11.98、GN10X.2XLARGE40 ¥18.04（官网价格计算器「GPU机型」按量T1官网优惠价，广州）","官网计算器价","¥/GPU·hr","2026-09-15T15:10+08:00（GPU机型目录全量枚举）"),
+    "Vast.ai":d("⚠️ ¥0.20–0.94起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：Tesla V100 16GB from $0.03/hr，median $0.14/hr（×6.7156）。Vast 目录未单列 32GB 版本","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥20.55","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p3.2xlarge = 1×V100 16G，$3.06/实例·hr ÷1→¥20.55（p3.16xlarge 8 卡折算同价 $3.06/卡）","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
+    "Google Cloud":d("¥16.65","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· N1 + NVIDIA V100 16G（nvidia-tesla-v100），on-demand $2.48/GPU·hr ×6.7156 = ¥16.65。GCP 目录仅 16G 版，无 32G","","¥/GPU·hr","2026-09-15T16:15+08:00（官方定价页全量枚举）")
   },
   "V100_32G":{
-    "IO.net":d("¥16.52","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 V100_32G、32 GB，$2.46/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "华为云":d("¥16.44–17.26","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· 1×V100-PCIe-32G / 1×V100-SXM2-32G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/GPU·hr","2026-09-14T16:01:27.869+08:00"),
+    "IO.net":d("¥16.50","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：V100_32G 32G 在售 x1/x2/x4，$2.4570/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "华为云":d("¥14.79–17.26","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· p2s.2xlarge.8 = 1×V100-PCIe-32G ¥16.44、p2vs.2xlarge.8 = 1×V100-SXM2-32G ¥17.259；贵阳一（cn-southwest-2）p2s ¥14.793 为全地域最低。2026-09-15 跨 16 地域全量枚举","计算器选配","¥/GPU·hr","2026-09-15T15:35+08:00（跨地域全量枚举）"),
     "智星云":d("¥1.32","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","V100 32G，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
     "火山引擎":d("¥14.7","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：V100*1，14.7 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
     "腾讯云":d("¥11.98","verified","按量计费（官网价格计算器 T1 档）","https://buy.cloud.tencent.com/price/cvm/calculator","GN10Xp.2XLARGE40 = 1×V100 32G（NVLink），10核40GB；官网价格计算器按量T1 ¥11.98/实例·小时 ÷1 = ¥11.98/卡·小时（2026-09-15 登录 UI 抓取）","官网计算器价","¥/GPU·hr","2026-09-15T12:35+08:00（登录 UI 实时抓取）"),
-    "AutoDL":d("¥1.88","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","V100-32GB ¥1.88/卡·小时（V100专区/beijingDC3，会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）"),
-    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "AutoDL":d("¥1.88–1.98","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","V100-32GB 原价 ¥1.98–2.08 → 会员 ¥1.88–1.98（30 台）；V100-SXM2-32GB 原价 ¥2.40 → 会员 ¥2.28（2 台）。2026-09-15 官网机器列表接口全量枚举","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "阿里云":d("¥26.46","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn6v-c8g1.2xlarge = 1×V100 32G（8vCPU/32GiB），按量目录价 ¥26.46/实例·小时 ÷1 = ¥26.46/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AWS":d("¥26.20","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · p3dn.24xlarge：8×V100 32G（NVLink），$31.212/实例·hr ÷8=$3.9015→¥26.20","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）")
   },
   "L20":{
     "火山引擎":d("¥30","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：L20*1，30 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
     "阿里云":d("¥14.42","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8is.2xlarge = 1×L20 48G（8vCPU/64GiB），按量目录价 ¥14.415104/实例·小时 ÷1 = ¥14.42/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "AutoDL":d("⚠️ ¥3.68","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","L20 48G ¥3.68/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：L20专区/beijingDC4 当前 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+    "AutoDL":d("⚠️ 目录未列","pending","官网全量目录未列该卡型","https://www.autodl.com/market","2026-09-15 调用官网机器列表接口全量枚举 3311 台机器，GPU 型号仅：A100-PCIE-40GB、A800、H20-NVLink、H800、RTX PRO 6000、PRO 6000 Max-Q、RTX 6000D、RTX 5090(+D)、RTX 4090(+D)、RTX 3090、RTX 3080 Ti/3080/3080x2、RTX 2080 Ti、RTX 3060、RTX A4000、TITAN Xp、GTX 1080 Ti、Tesla T4、V100(-SXM2)、vGPU-32/48GB、MTT S4000；无 L20（L20专区亦为空）","无官方公开报价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）")
   },
   "H20":{
     "阿里云":d("¥36.39","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8v.4xlarge = 1×H20 96G（16vCPU/96GiB），按量目录价 ¥36.3852/实例·小时 ÷1 = ¥36.39/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "AutoDL":d("⚠️ ¥7.98","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","H20 96G ¥7.98/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：无 H20 专区，GPU型号筛选亦无 H20，在售视图 0 台可租，未取到实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+    "AutoDL":d("¥9.98","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","H20-NVLink 原价 ¥10.50/卡·小时，会员 9.5 折 ¥9.98；2026-09-15 官网机器列表接口全量枚举，H20-NVLink 共 18 台 / 8 张空闲卡。注：此前课程快照记的 ¥7.98 实为 A800-80GB-NVLink 的价，已更正","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "网鼎(立方云)":d("⚠️ 需询价","pending","官网在售但无公开价","https://www.lifangyun.com/gpu-container","官网 GPU容器「单卡实例」明确在售「NVIDIA H20 96 GB · GPU 1 张 · 16 核 / 120 GB」，但页面未标价格；首页 API 中 96GB 卡报价 ¥7.90/时（记为「PRO 6000 96 GB」，型号对应关系待确认）。2026-09-15 官网产品页 + API 全量枚举","型号待确认 / 需询价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）")
   },
   "RTX 5090":{
-    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 5090 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "网鼎(立方云)":d("¥2.98","verified","按小时","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：RTX 5090 32 GB · 1 张 · price=2.98 hour","官网明码价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：GeForce RTX 5090 x1 已 Sold Out，不作为当前可购买价","已售罄","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "网鼎(立方云)":d("¥2.98","verified","按小时（官网明码价）","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：RTX 5090 32 GB · 1 张 · ¥2.98/小时（16 核 / 96GB / 30GB SSD）；另有 8 卡包月 ¥13200/月，折 ¥1650/卡·月 ≈ ¥2.29/卡·小时（按 720h/月，包月折算）。2026-09-15 全量枚举","官网明码价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API 全量枚举）"),
     "智星云":d("¥2.75","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 5090 32G 训练池，官网 Nuxt 资源公开挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
     "阿里云":d("¥20.12","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn9t.6xlarge = 1×RTX 5090 32G（24vCPU/192GiB），按量目录价 ¥20.1172/实例·小时 ÷1 = ¥20.12/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "AutoDL":d("¥2.78","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","RTX 5090 / 32GB ¥2.78/卡·小时（会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）")
+    "AutoDL":d("¥2.78–2.88","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","RTX 5090 原价 ¥2.93–3.03/卡·小时，会员 9.5 折后 ¥2.78–2.88；2026-09-15 官网机器列表接口全量枚举，RTX 5090 共 565 台 / 386 张空闲卡（另有 RTX 5090 D 原价 ¥2.93–3.45）","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "Vast.ai":d("⚠️ ¥1.81–4.16起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：RTX 5090 32GB from $0.27/hr，median $0.62/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "RunPod":d("¥4.63–6.65","verified","Community / Secure on-demand","https://www.runpod.io/pricing","官网定价页 JSON-LD 全量枚举（19 个卡型）：RTX 5090 Community $0.69/GPU·hr、Secure $0.99/GPU·hr × 6.7156","官网价","¥/GPU·hr","2026-09-15T15:55+08:00（官网定价页全量枚举）")
   },
   "RTX 4090":{
-    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 4090 / 4090 D x1 均标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：GeForce RTX 4090 与 RTX 4090 D 均已 Sold Out，不作为当前可购买价","已售罄","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "智星云":d("¥1.65","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 4090，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
     "火山引擎":d("¥8.75","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：4090D*1 24G，12vCPU/64GiB，8.75 元/GPU/小时（4090D 特供版置于 RTX 4090 行）","官方文档价","¥/GPU·hr","2026-09-15T10:10+08:00（官方文档通用队列按量价表重核）"),
     "阿里云":d("¥14.49","verified","on-demand","https://www.aliyun.com/price/ecs/ecs-pricing/zh","ECS GPU 实例 gn8t.4xlarge = 1×RTX 4090 24G（16vCPU/128GiB），按量目录价 ¥14.49/实例·小时 ÷1 = ¥14.49/卡·小时（中国大陆区）","官方 ECS 按量目录价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "AutoDL":d("⚠️ ¥1.98","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","4090D 24G ¥1.98/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：GPU型号筛选 RTX 4090/4090D 显示 0/1788、0/1024 台可租，在售视图无实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+    "AutoDL":d("¥1.68–2.18","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","RTX 4090 原价 ¥1.77–2.29/卡·小时（651 台在目录，各机器自定价），会员 9.5 折后 ¥1.68–2.18；另有 RTX 4090D 原价 ¥1.98 → 会员 ¥1.88（309 台）。2026-09-15 官网机器列表接口全量枚举","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "Vast.ai":d("⚠️ ¥0.94–3.22起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：RTX 4090 24GB from $0.14/hr，median $0.48/hr；另有 RTX 4090D from $0.67/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "RunPod":d("¥2.28–4.97","verified","Community / Secure on-demand","https://www.runpod.io/pricing","官网定价页：RTX 4090 Community $0.34/GPU·hr、Secure $0.74/GPU·hr × 6.7156","官网价","¥/GPU·hr","2026-09-15T15:55+08:00（官网定价页全量枚举）")
   },
   "RTX 3090":{
-    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后目录中的 GeForce RTX 3090 x1 标为 Sold Out，因此不作为当前在售价格","已售罄","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("N/A","na","已售罄","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：GeForce RTX 3090 已 Sold Out，不作为当前可购买价","已售罄","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "智星云":d("¥1.10","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","RTX 3090，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
-    "AutoDL":d("⚠️ ¥1.58","pending","按小时（社区/市场参考价）","https://www.autodl.com/market","RTX 3090 24G ¥1.58/卡·小时（社区参考价）；2026-09-15 登录官网市场页核验：GPU型号筛选 RTX 3090 显示 0/210 台可租，在售视图无实时价，保留社区参考价","社区参考价（官网在售 0 台）","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 核验）")
+    "AutoDL":d("¥1.32–1.58","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","RTX 3090 原价 ¥1.39–1.66/卡·小时（206 台在目录，各机器自定价），会员 9.5 折后 ¥1.32–1.58；2026-09-15 官网机器列表接口全量枚举","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "Vast.ai":d("⚠️ ¥0.67–1.07起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：RTX 3090 24GB from $0.10/hr，median $0.16/hr；另有 RTX 3090 Ti from $0.15/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "RunPod":d("¥1.48–3.36","verified","Community / Secure on-demand","https://www.runpod.io/pricing","官网定价页：RTX 3090 Community $0.22/GPU·hr、Secure $0.50/GPU·hr × 6.7156","官网价","¥/GPU·hr","2026-09-15T15:55+08:00（官网定价页全量枚举）")
   },
   "A800":{
     "智星云":d("¥2.31","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A800 40G 训练池，官网 Nuxt 资源公开挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
-    "AutoDL":d("¥5.59","verified","按量计费（官网在售视图实时价）","https://www.autodl.com/market","A800-80GB ¥5.59/卡·小时（A800专区/neimengDC2，会员最低价，按量计费）；2026-09-15 登录后于市场页实时抓取，原社区快照 ¥5.98 偏高已校正","官网在售实时价","¥/GPU·hr","2026-09-15T12:20+08:00（登录 UI 实时抓取）"),
-    "腾讯云":d("⚠️ ¥14","pending","按量计费（第三方引用官方价，待登录复核）","https://cloud.tencent.com/document/product/560/8025","A800 机型按量计费 ¥14/实例·小时 ÷1；2026-09-15 登录官网价格计算器核验：GPU机型分类未列 A800，保留第三方引用价","待官网复核","¥/GPU·hr","2026-09-15（第三方价表快照，待登录复核）")
+    "AutoDL":d("¥5.59–7.98","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","A800-80GB 原价 ¥5.88 → 会员 ¥5.59（58 台）；A800-80GB-NVLink 原价 ¥8.40 → 会员 ¥7.98（40 台）。2026-09-15 官网机器列表接口全量枚举；原社区快照 ¥5.98 已校正","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "腾讯云":d("⚠️ 官网未列","pending","GPU机型目录未列该卡型","https://buy.cloud.tencent.com/price/cvm/calculator","2026-09-15 全量枚举腾讯云价格计算器「GPU机型」分类（广州/北京）：公开在售 GPU 仅 P4、P40、T4、V100、A100 五类，未列 A800；原第三方引用价 ¥14 无官方出处，已撤下","无官方公开报价","¥/GPU·hr","2026-09-15T15:10+08:00（GPU机型目录全量枚举）")
   },
   "PRO 6000 BLACKWELL":{
-    "IO.net":d("¥14.04","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录在售：US x1 PRO 6000 BLACKWELL、96 GB，$2.09/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "网鼎(立方云)":d("¥7.90","pending","按小时","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：PRO 6000 96 GB · 1 张 · price=7.90；页面未标注 Blackwell，型号待确认","型号待确认","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "IO.net":d("¥14.03","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：PRO 6000 BLACKWELL 96G 在售 x1/x2/x4/x8，$2.0895/卡·hr（US）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "网鼎(立方云)":d("⚠️ ¥7.90","pending","按小时（型号待确认）","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网公开 API：96 GB 显存 · 1 张 · ¥7.90/小时（16 核 / 120GB / 30GB SSD），标题写作「PRO 6000 96 GB」；但官网 GPU容器「单卡实例」实际列为「RTX 6000D 84 GB」与「NVIDIA H20 96 GB」，未见「RTX PRO 6000」。型号对应关系待确认，故不计入预警。2026-09-15 全量枚举","型号待确认","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）")
   },
   "RTX PRO 6000":{
-    "IO.net":d("⚠️ ¥13.31–24.04","pending","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录采用 RTXPro6000/RTXPRO6000 名称（均 96 GB）：Finland x4 $7.93/hr ÷4 到 Australia/Japan/Netherlands/US x8 $28.64/hr ÷8；与本表 RTX PRO 6000 命名变体的硬件对应关系待确认","型号待确认","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "RunPod":d("¥11.35","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand RTX Pro 6000 $1.69/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "IO.net":d("¥13.19–24.04","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：存在两种命名变体（RTXPRO6000 96G x1/x2/x4 $1.9634–2.1642/卡·hr，FI；RTXPro6000 96G x8 $3.5805/卡·hr，AU/JP/NL），硬件对应关系页内未明示","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "RunPod":d("¥11.35","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand RTX Pro 6000 $1.69/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "AutoDL":d("¥6.98","verified","按量计费（官网全量目录 · 会员价）","https://www.autodl.com/market","RTX PRO 6000（96GB）原价 ¥7.35/卡·小时，会员 9.5 折 ¥6.98；2026-09-15 官网机器列表接口全量枚举，共 236 台 / 75 张空闲卡。另有 PRO 6000 Max-Q 原价 ¥7.15、RTX 6000D（84GB）原价 ¥6.80","官网全量枚举 · 会员价","¥/GPU·hr","2026-09-15T15:20+08:00（官网机器列表接口全量枚举）"),
+    "Vast.ai":d("⚠️ ¥6.18–8.06起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页 Blackwell 分类：RTX PRO 6000 WS 96GB from $1.20/hr（median $1.60）、RTX PRO 6000 S 48GB from $1.20/hr（median $1.53）、RTX PRO 6000 Max-Q 96GB from $0.92/hr（median $1.54）（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）"),
+    "AWS":d("¥22.59–27.82","verified","on-demand","https://calculator.aws/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(N.%20Virginia)/Linux/index.json","us-east-1 · g7e 系列 = NVIDIA RTX PRO 6000 Blackwell Server Edition（96GB GDDR7，AWS 官方文档确认）：g7e.2xlarge 1 卡 $3.36312→¥22.59；g7e.12/24/48xlarge 折算均 $4.143/卡→¥27.82。注：g7（非 e）系列为 RTX PRO 4500 Blackwell，不在本表","官网计量表","¥/GPU·hr","2026-09-15T16:05+08:00（官方计量表全量枚举）"),
+    "Google Cloud":d("¥30.22","verified","on-demand","https://cloud.google.com/products/compute/pricing/accelerator-optimized","Iowa（us-central1）· G4 = NVIDIA RTX PRO 6000 Blackwell Server Edition（96GB GDDR7）：g4-standard-48（1 GPU）on-demand $4.49993/实例·hr ÷1 = $4.49993/GPU·hr ×6.7156 = ¥30.22；g4-standard-96/192/384（2/4/8 GPU）折算同价 $4.49993。小规格 g4-standard-6/12/24（1/8、1/4、1/2 GPU）折算 $5.175/GPU·hr 更贵","","¥/GPU·hr","2026-09-15T16:15+08:00（官方定价页全量枚举）")
   },
   "A40":{
-    "IO.net":d("¥10.14–10.21","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A40（India、48 GB）：x1 $1.51/hr；x2 $3.04/hr ÷2；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
+    "IO.net":d("¥10.15–10.21","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：A40 48G 在售 x1/x2，$1.5120–1.5199/卡·hr（IN）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
     "RunPod":d("¥2.35","verified","Community / Secure on-demand","https://www.runpod.io/pricing","demand A40 $0.35/GPU·hr × 6.7156（页面解析最低价）","官网价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
-    "智星云":d("¥2.20","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A40，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST")
+    "智星云":d("¥2.20","verified","按小时（官网下单前明码价）","https://ai-galaxy.cn/","A40，公开前台挂牌价","","¥/GPU·hr","2026-09-14 15:51–15:54 CST"),
+    "Vast.ai":d("⚠️ ¥6.72–6.92起","pending","社区参考价（平台实时挂单）","https://vast.ai/pricing","官方定价页：A40 48GB from $1.00/hr，median $1.03/hr（×6.7156）","社区参考价","¥/GPU·hr","2026-09-15T15:55+08:00（官方定价页全量枚举）")
   },
   "A30":{
-    "IO.net":d("¥9.52–13.23","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后目录的在售 A30（India、24 GB）：x4 $5.67/hr ÷4 = $1.4175/GPU·hr；x1 $1.97/hr；USD ×6.7156","动态官网价","¥/GPU·hr","2026-09-14T17:26:06+08:00（登录后 Virtual Machine 目录 UI 采集）"),
-    "火山引擎":d("¥8.05","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A30*1，8.05 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00")
+    "IO.net":d("¥9.52–13.22","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：A30 24G 在售 x1/x2/x4，$1.4175–1.9688/卡·hr（IN）","动态官网价","¥/GPU·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）"),
+    "火山引擎":d("¥8.05","verified","on-demand","https://www.volcengine.com/docs/84772/1263500","通用队列按量付费（华北2北京/华东2上海）：A30*1，8.05 元/GPU/小时","官方文档价","¥/GPU·hr","2026-09-15T13:16:40+08:00"),
+    "智星云":d("¥1.10","verified","按小时（官网下单前明码价）","https://gpu.ai-galaxy.com/store","NVIDIA A30 (24G) ¥1.10/小时，官网算力市场公开挂牌价","","¥/GPU·hr","2026-09-15T14:55+08:00"),
+    "阿里云":d("⚠️ 需工单申请","pending","需提交工单申请（非自助下单）","https://help.aliyun.com/zh/egs/gpu-accelerated-compute-optimized-instance-families","阿里云确有 A30：规格族 gn7s，1 卡实例 ecs.gn7s-c8g1.2xlarge = 1×A30 24G。官方文档明确「如需使用 gn7s，请提交工单申请」，故不在公开价格页、无公开单价","需工单申请","¥/GPU·hr","2026-09-15T14:55+08:00"),
+    "华为云":d("¥16.25","verified","官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-southwest-2&language=zh-CN","贵阳一（cn-southwest-2）· pi3.6xlarge.4 = 1×NVIDIA A30 24G，按需 ¥16.25/实例·小时 ÷1 = ¥16.25/卡·小时。2026-09-15 跨 16 个地域全量扫描 ECS 加速卡规格，A30 仅贵阳一在售","计算器选配","¥/GPU·hr","2026-09-15T15:35+08:00（跨地域全量枚举）")
+  },
+  "GAUDI2":{
+    "IO.net":d("¥7.76","verified","on-demand","https://cloud.io.net/cloud/virtual-machines","登录后全量枚举硬件目录 API：GAUDI2（Intel Gaudi 2，96G）在售 x8，$1.1550/卡·hr（US）→ 此前看板为 N/A，本轮补齐","动态官网价","¥/加速器·hr","2026-09-15T15:58+08:00（登录后硬件目录 API 全量枚举）")
   },
   "昇腾 310":{
-    "华为云":d("¥1.10","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· ai1.large.4.linux：1×Ascend 310 8G；CPU/内存实例价，磁盘/带宽另计","计算器选配","¥/NPU·hr","2026-09-14T16:01:27.869+08:00")
+    "华为云":d("¥0.97–1.10","verified","官方价格计算器选配 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=ecs&region=cn-north-4&language=zh-CN","北京四（cn-north-4）· ai1.large.4.linux 1×Ascend 310 8G ¥1.10 ／ ai1s.large.4.linux ¥1.10 ／ kai1s.xlarge.1.linux ¥0.97（按需，1 卡基准）。2026-09-15 跨地域全量枚举","计算器选配","¥/NPU·hr","2026-09-15T15:35+08:00（跨地域全量枚举）")
   },
   "昇腾 910B":{
-    "华为云":d("¥18.68–33.97","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· 1×snt9b1/2/3，官方字段标识 910B","计算器选配","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+    "华为云":d("¥18.68–33.97","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· 官方 产品类型 字段=Snt9b（即 910B），1 卡整机基准按需：snt9b1 ¥18.682、snt9b2 ¥29.552、snt9b3 ¥33.968 元/卡·小时（2/4/8 卡整机折算同价）。2026-09-15 全量枚举 56 个 ModelArts 规格","计算器选配","¥/NPU·hr","2026-09-15T15:35+08:00（ModelArts 全量枚举）"),
+    "网鼎(立方云)":d("⚠️ 需询价","pending","官网在售但无公开价","https://www.lifangyun.com/api/v1/home/compute-instances/display","官网在售「昇腾 910B2 64GB × 8 张」（GPU容器多卡实例 + 裸金属两种形态；裸金属配 96 核 / 2TB / 3.84TB×2），price 字段为 \"???\"，按钮为「获取报价」。2026-09-15 官网 API + 产品页全量枚举","无公开报价","¥/GPU·hr","2026-09-15T15:45+08:00（官网 API + 产品页全量枚举）")
   },
   "昇腾 910C?/Snt9c":{
-    "华为云":d("⚠️ ¥67.88","pending","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· Snt9c 超节点 Pro ¥543/8 卡；官方未直接写 910C","型号待确认","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+    "华为云":d("⚠️ ¥67.88","pending","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· 官方 产品类型 字段=Snt9c 超节点pro，全量枚举 12 种配置（8/16/32/64/80/128/144/256/272/288/352/384 卡）折算单卡一致 ¥67.875–67.938/卡·小时。官方字段未直接写「910C」，故型号标注为待确认","型号待确认（官方字段 Snt9c 超节点pro）","¥/NPU·hr","2026-09-15T15:35+08:00（ModelArts 全量枚举）")
   },
   "昇腾 910/D910":{
-    "华为云":d("¥29.25","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","8×bm.d910.xlarge.8.d：¥233.975/实例·hr ÷8；1×SKU 的 GPU count=0，未纳入严格折算","计算器选配","¥/NPU·hr","2026-09-14T15:08:27+08:00")
+    "华为云":d("¥29.25","verified","ModelArts 官方价格计算器 · on-demand","https://portal.huaweicloud.com/api/calculator/rest/cbc/portalcalculatornodeservice/v4/api/productInfo?urlPath=modelarts&region=cn-north-9&language=zh-CN","乌兰察布一（cn-north-9）· bm.d910.xlarge.8.d 8 卡整机 ¥233.975/实例·小时 ÷8 = ¥29.247/卡·小时（官方 产品类型 字段未写型号，SKU 名含 d910）。2026-09-15 ModelArts 全量枚举","计算器选配","¥/NPU·hr","2026-09-15T15:35+08:00（ModelArts 全量枚举）")
   }
 };
 const naReasons={
   'IO.net':'登录后 Virtual Machine 目录未列该卡型的在售实例；售罄或仅可 Request 的条目不作为当前可购买价格',
-  AWS:'本次 us-east-1 官方 EC2 公开目录未核到该卡型的可复核 SKU/单价',
-  'Google Cloud':'官方加速器定价页未列该卡型或未列可直接折算的完整 VM SKU',
-  'Vast.ai':'公开市场为动态宿主挂单；本次未获得该卡型的固定可复核报价',
-  RunPod:'官方公开价格页未列该卡型',
-  '阿里云':'官方 RDS Custom AI 节点 / ECS GPU 价表（help.aliyun.com）仅覆盖部分卡型；未列卡型以 N/A 保留，待 ECS 价格计算器登录复核',
-  '网鼎(立方云)':'官网公开记录显示“获取报价”或 price=???，非下单前明码价',
-  '腾讯云':'官方计费说明要求登录后查看准确价格；匿名计算器未返回 GPU 单价',
-  '火山引擎':'官方通用队列按量价表（文档 1263500）未列该卡型；其余卡型以 N/A 保留',
-  '智星云':'公开前台未列该卡型的可核验小时价',
-  'AutoDL':'公开型号目录不含价格；匿名市场 API 返回登录超时',
-  '华为云':'该卡型未在匿名公开计算器/接口中返回'
+  AWS:'已于 2026-09-15 全量枚举 AWS 官方 Pricing Calculator 计量表（us-east-1 Linux on-demand，共 68 个 GPU 实例）。AWS 在售 GPU 实例族仅：p6e-gb200(GB200)、p6-b200(B200)、p6-b300(B300)、p5en/p5e(H200)、p5/p5.4xlarge(H100 80G)、p4de(A100 80G)、p4d(A100 40G)、p3dn(V100 32G)、p3(V100 16G)、g7e(RTX PRO 6000 Blackwell)、g7(RTX PRO 4500 Blackwell)、g6e(L40S)、g6/gr6/g6f/gr6f(L4)、g5(A10G)、g5g(T4G)、g4dn(T4)、g3/g3s(M60)、p2(K80)；H100 NVL、L40、L20、H20、A40、A30、A6000、RTX 6000 Ada/6000 ADA、RTX 5090/4090/3090、A800、GAUDI2 及昇腾系 AWS 均无在售规格',
+  'Google Cloud':'已于 2026-09-15 全量枚举官方 accelerator-optimized 定价页（Iowa us-central1，第 1 列为 on-demand）。GCP 在售加速卡仅：A4X Max(GB300)、A4X(GB200)、A4(B200)、A3 Ultra(H200)、A3 Mega/High/Edge(H100)、A2 Ultra(A100 80G)、A2 Standard(A100 40G)、G4(RTX PRO 6000 Blackwell)、G2(L4)、N1 可挂 T4/P4/V100/P100；L40S、L40、A10、A40、A30、A6000、L20、H20、RTX 消费卡全系、A800、H100 NVL、B300、GAUDI2 及昇腾系 GCP 均未列',
+  'Vast.ai':'已于 2026-09-15 全量枚举官方定价页「Live GPU Prices」（按代际分组、按卡计价）。Vast 在售卡型仅：H100 SXM/PCIE/NVL、H200/H200 NVL、B200、B300(无实时挂单)、GB10、RTX PRO 6000 WS/S/Max-Q、RTX 5090/4090/4090D/3090/3090 Ti、RTX 50 系/40 系/30 系消费卡、L40S、L40、L4、A100 SXM4/PCIE、RTX A6000/A5000/A4000、A40、A10、T4、V100 16G、Turing/Pascal 老卡；L20、H20、A800、A30、A6000 之外的国产卡、H100 NVL 之外命名、RTX 6000 Ada、GAUDI2 及昇腾系未列',
+  RunPod:'已于 2026-09-15 全量枚举官方定价页 JSON-LD（共 19 个卡型，Community/Secure 两档）。RunPod 在售卡型仅：B300、B200、H200、H100 NVL/PCIE/SXM、A100 PCIe/SXM、RTX Pro 6000(含 MIG 48G/24G)、L40S、L40、L4、RTX 6000 Ada、RTX A6000、RTX A5000、A40、RTX 5090/4090/3090；L20、H20、A800、A30、A10、T4、V100、RTX 6000 Ada 之外命名、RTX 6000D、GAUDI2 及昇腾系未列',
+  '阿里云':'阿里云 ECS GPU 在售规格族：gn6i=T4、gn6v/gn6e=V100、gn7i=A10、gn7e=A100 80G、gn7=A100 40G、gn7s=A30（需工单）、gn8is=L20、gn8t=RTX4090、gn8v=H20、gn9t=RTX5090、gn9g/gn9gc/gn8ia=AMD。不在上列的卡型阿里云 ECS 无对应规格（如 L4/H100/H200/B200/B300 等），以 N/A 保留',
+  '网鼎(立方云)':'已于 2026-09-15 全量枚举官网公开 API + 全部产品页（/gpu-container 单卡&多卡实例、/bare-metal 裸金属）：在售卡型仅 RTX 5090 32GB(¥2.98/时·1卡，8卡包月折算≈¥2.29)、96GB 卡(¥7.90/时·1卡，型号待确认)、RTX 6000D 84GB、NVIDIA H20 96GB、A100 80GB×8、昇腾 910B2 64GB×8、H100 80G SXM5×8、H200 141GB×8；其中 A100/H100/H200/昇腾 标注为「???」需获取报价，官网无价格计算器。其余卡型官网未列',
+  '腾讯云':'已于 2026-09-15 用浏览器全量枚举官网价格计算器「GPU机型」目录（广州 regionId=1，无需登录即可读表，共 25 个规格）：公开在售 GPU 仅 P4(GN6S)、P40(GN8)、T4(GN7/GI3X)、V100(GN10X/GN10Xp)、A100(GT4) 五类；其余卡型（H100/H200/L20/L40/L40S/L4/H20/A800/A6000/RTX 系及昇腾）官方自助目录未列，如需须提交工单/走白名单',
+  '火山引擎':'已于 2026-09-15 枚举火山引擎两大 GPU 体系：①MLP「通用队列」按量价表（文档 1263500，含 A10/L20/L4/T4/V100/A100/A30/4090D）；②ECS GPU 实例族（官方规格文档 6731/1330945：gni2=A10、ini2=A30、pni2=A100 80G、g1ve=V100 32G、g1te/g1tl=T4、gni3=Beta）。除上述卡型外，H100/H100 NVL/H200/B200/B300/L40S/L40/A6000/H20/RTX 5090/RTX 3090/A800/RTX 6000 Ada/RTX PRO 6000/GAUDI2 及昇腾系火山引擎均无在售规格',
+  '智星云':'已于 2026-09-15 全量枚举官网算力市场（gpu.ai-galaxy.com/store，共 16 个在售卡型）：RTX 5090 32G、A100-SXM4-80GB、A100-SXM4-40GB、A800-SXM4-40GB、RTX 4090PLUS 48G、RTX 4090 24G、RTX A6000、RTX A5000、A40、A30、V100-32GB、V100-16GB、RTX 3090、RTX 3080、RTX 2080 Ti、GTX 1080 Ti。H100/H100 NVL/H200/B200/B300/L40S/L40/L4/A10/L20/H20/RTX 6000 Ada/GAUDI2 及昇腾系智星云均未列',
+  'AutoDL':'已于 2026-09-15 用浏览器登录态全量枚举官网机器列表接口（POST /api/v1/user/machine/list，共 3311 台机器、30 种 GPU，价格字段 payg_price 为「分/卡·小时」刊例价，会员 9.5 折后为实际价）。在售卡型仅：A100-PCIE-40GB、A800-80GB(-NVLink)、H20-NVLink、H800、RTX PRO 6000、PRO 6000 Max-Q、RTX 6000D、RTX 5090(+D)、RTX 4090(+D)、RTX 3090、RTX 3080 Ti/3080/3080x2、RTX 2080 Ti、RTX 3060、RTX A4000、TITAN Xp、GTX 1080 Ti、Tesla T4、V100-32GB(V100-SXM2-32GB)、vGPU-32GB/48GB、MTT S4000(摩尔线程)；L20/A6000/A40/L4/L40/L40S/RTX 6000 Ada/PRO 6000 BLACKWELL/GAUDI2/B200/B300/H100/H200 均未列',
+  '华为云':'已于 2026-09-15 跨 16 个地域全量枚举官方价格计算器 ECS 接口（urlPath=ecs）+ ModelArts 接口（urlPath=modelarts，56 个规格）。华为云全部在售加速卡仅：NVIDIA T4(g6/pi2)、T4-vGPU(g6v 2Q/4Q/8Q)、V100-32G(p2s/p2vs)、V100-16G(p2v/g5)、P4(pi1)、P100(p1)、A30(pi3，仅贵阳一 cn-southwest-2 ¥16.25)，以及 Ascend 310(kai1s/ai1/ai1s)、Ascend 910B(Snt9b)、Snt9c 超节点pro、d910。H100/H100 NVL/H200/B200/B300/A100/L40S/L40/L4/A10/A6000/L20/H20/RTX 全系/RTX PRO 6000/GAUDI2 华为云均无在售规格'
 };
 const specialNa={
   'H100 NVL':{AWS:'AWS 官方 P5/P5en 本次公开核验未列 H100 NVL；p5en 实为 H200，未以 H100 NVL 计价','IO.net':'登录后目录未见在售 H100 NVL；仅通用 H100 在售，未将其推定为 NVL'},
@@ -323,15 +373,17 @@ function numOf(s){ // 从价格字符串取代表值：区间取中点，单值�
   if(!nums.length)return null;
   return nums.length===1?nums[0]:(Math.min.apply(null,nums)+Math.max.apply(null,nums))/2;
 }
+// 价格预警只横向对比「国内平台」，海外平台（IO.net/AWS/Google Cloud/Vast.ai/RunPod）不参与
+const CN_PLATFORMS=['阿里云','网鼎(立方云)','腾讯云','火山引擎','智星云','AutoDL','华为云'];
 function alertRows(){
   return cards.map(g=>{
     const ours=numOf(entry(g,'我方平台').value);
-    const others=platforms.filter(p=>p!=='我方平台').map(p=>numOf(entry(g,p).value)).filter(v=>v!=null);
+    const others=CN_PLATFORMS.map(p=>numOf(entry(g,p).value)).filter(v=>v!=null);
     if(ours==null)return {g:g,ours:null,otherAvg:null,n:others.length,diff:null,status:'我方无报价'};
-    if(!others.length)return {g:g,ours:ours,otherAvg:null,n:0,diff:null,status:'其他平台无报价'};
+    if(!others.length)return {g:g,ours:ours,otherAvg:null,n:0,diff:null,status:'国内平台无报价'};
     const avg=others.reduce((a,b)=>a+b,0)/others.length;
     const diff=(avg-ours)/ours*100;
-    const status = diff<=-5?'⚠️ 我方高于市场（预警）':(diff>=5?'我方低于市场（优势）':'接近市场');
+    const status = diff<=-5?'⚠️ 我方高于国内市场（预警）':(diff>=5?'我方低于国内市场（优势）':'接近国内市场');
     return {g:g,ours:ours,otherAvg:avg,n:others.length,diff:diff,status:status};
   });
 }
@@ -341,7 +393,7 @@ function renderAlert(){
   rows.sort((a,b)=>{const av=(a.diff==null)?1e9:a.diff,bv=(b.diff==null)?1e9:b.diff;return av-bv;});
   const warn=rows.filter(r=>r.diff!=null&&r.diff<=-5).length;
   const good=rows.filter(r=>r.diff!=null&&r.diff>=5).length;
-  document.getElementById('alertMeta').textContent='我方在售 '+rows.length+' 个卡型 · '+warn+' 个高于市场均价 5%+（预警）· '+good+' 个低于市场 5%+（优势）';
+  document.getElementById('alertMeta').textContent='我方在售 '+rows.length+' 个卡型 · 对比 '+CN_PLATFORMS.length+' 家国内平台 · '+warn+' 个高于国内市场均价 5%+（预警）· '+good+' 个低于国内市场 5%+（优势）';
   document.getElementById('alertBody').innerHTML=rows.map(r=>{
     const cls=r.diff==null?'':(r.diff<=-5?'warn':(r.diff>=5?'good':''));
     const pct=r.diff==null?'—':((r.diff>0?'+':'')+r.diff.toFixed(1)+'%');
@@ -401,7 +453,7 @@ function exportXlsx(){
   const A=alertRows();
   const m=[['卡型'].concat(platforms)];
   cards.forEach(function(g){m.push([g].concat(platforms.map(function(p){return entry(g,p).value;})));});
-  const al=[['卡型','我方平台','覆盖平台数','其他平台均价','其他高出我方%','状态']];
+  const al=[['卡型','我方平台','国内平台覆盖数','国内平台均价','国内高出我方%','状态']];
   A.filter(function(r){return r.ours!=null;}).sort(function(a,b){const av=(a.diff==null)?1e9:a.diff,bv=(b.diff==null)?1e9:b.diff;return av-bv;}).forEach(function(r){
     al.push([r.g,r.ours.toFixed(2),r.n,(r.otherAvg==null?'':r.otherAvg.toFixed(2)),(r.diff==null?'':r.diff.toFixed(1)),r.status]);
   });

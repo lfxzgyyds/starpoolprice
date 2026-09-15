@@ -19,6 +19,13 @@ refresh.last.json
 _hw*
 _huawei*
 
+# 本地运维小工具（抓取探针 / 批量补丁），不入库
+_p.mjs
+_tabs.mjs
+_apply.mjs
+_spec.json
+_patch.json
+
 # 注意：
 #   history/ 目录刻意不忽略——历史价格快照要提交到 GitHub 做备份
 #   .nojekyll 必须保留（GitHub Pages 用）
