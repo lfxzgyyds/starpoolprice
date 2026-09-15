@@ -93,10 +93,10 @@ git init                       # 如尚未初始化
 git add .
 git commit -m "GPU 价格看板"
 git remote add origin https://github.com/<用户名>/<仓库名>.git
-git push -u origin master
+git push -u origin main
 ```
 
-然后在 GitHub 仓库里：**Settings → Pages → Source 选「Deploy from a branch」→ Branch 选 `master` + `/ (root)` → Save**。
+然后在 GitHub 仓库里：**Settings → Pages → Source 选「Deploy from a branch」→ Branch 选 `main` + `/ (root)` → Save**。
 约 1 分钟后访问：
 
 ```
