@@ -367,13 +367,13 @@ if(histCard){
 /* ============================================================
    价格预警 —— 以我方平台为基准，其他平台取「有报价者的均价」
    ============================================================ */
-function numOf(s){ // 从价格字符串取代表值：区间取中点，单值取本身，N/A→null
+function numOf(s){ // 从价格字符串取代表值：区间取最低，单值取本身，N/A/—→null
   if(s==null)return null;
   const t=String(s);
-  if(/N\/A/i.test(t))return null;
+  if(/N\/A/i.test(t)||t==='—')return null;
   const nums=(t.match(/\d+(?:\.\d+)?/g)||[]).map(Number).filter(n=>n>0);
   if(!nums.length)return null;
-  return nums.length===1?nums[0]:(Math.min.apply(null,nums)+Math.max.apply(null,nums))/2;
+  return nums.length===1?nums[0]:Math.min.apply(null,nums);
 }
 // 价格预警只横向对比「国内平台」，海外平台（IO.net/AWS/Google Cloud/Vast.ai/RunPod）不参与
 const CN_PLATFORMS=['阿里云','网鼎(立方云)','腾讯云','火山引擎','智星云','AutoDL','华为云'];
@@ -420,15 +420,15 @@ const obaseCols=[
   {key:'nebulablock',name:'nebulablock'}
 ];
 const overseasBase={
-  'H100':{io:['¥10.68起','实时最低：H100 PCIe 单挂；聚合档 ¥24.09–29.04（84 在售）',1],vast:['¥18.63起','实时最低：H100 NVL 活体挂单（H100 SXM 现 ¥149.90）',1],hyperstack:['¥16.75','H100-80G-PCIe 有货·按需',0],verda:['¥20.63','H100 80GB·按需',0],cw:['¥41.24','北美按需（Spot ¥16.51）',0],crusoe:['¥26.13','H100·按需',0],nebulablock:['¥19.39','H100 PCIe 8卡按需（Spot ¥14.06起）',0]},
-  'H200':{io:['¥13.43','实时最低：H200 活体挂单（聚合 ¥13.43–34.68）',1],vast:['¥58.32起','实时最低：H200 活体挂单（偏贵）',1],hyperstack:['¥26.73','H200-141G-SXM5 缺货·需预约',0],verda:['¥26.93','H200 141GB·按需',0],cw:['¥42.24','北美按需（Spot ¥17.53）',0],crusoe:['¥28.74','H200·按需',0],nebulablock:['¥30.15','H200 NVLink 1卡按需',0]},
-  'B200':{io:['¥32.84','实时最低：B200 活体挂单（聚合 ¥32.84–46.94）',1],vast:['¥109.15起','实时最低：B200 活体挂单（偏贵）',1],hyperstack:['¥40.20','B200-SXM 缺货·需预约',0],verda:['¥39.97','B200 180GB·No availability',0],cw:['¥57.62','北美按需（Spot ¥28.57）',0],crusoe:['—','Contact sales',0],nebulablock:['¥26.46','B200 8卡 Spot（仅）',0]},
-  'B300':{io:['¥30.22','实时：B300 SXM6 AC 有货',1],vast:['—','无实时挂单',1],hyperstack:['¥49.58','B300-SXM 缺货·需预约',0],verda:['¥48.59','B300 268GB·No availability',0],cw:['—','Contact（Spot ¥30.01）',0],crusoe:['—','Contact sales',0],nebulablock:['—','未列',0]},
-  'A100':{io:['¥8.66','实时最低：A100-SXM4-80GB/PCIE 单挂（聚合 ¥8.66–15.13）',1],vast:['¥19.07起','实时最低：A100 PCIE 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥15.41','A100·按需',0],nebulablock:['—','未列',0]},
-  'L40S':{io:['¥5.64','实时最低：L40S 活体挂单（聚合 ¥5.64–13.04）',1],vast:['¥43.05','实时：L40S 活体挂单（偏贵）',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥10.05','L40S·按需',0],nebulablock:['—','未列',0]},
-  'RTX PRO 6000':{io:['¥13.31起','实时最低：RTXPRO6000（PRO 6000 BLACKWELL ¥14.03）',1],vast:['¥17.92起','实时最低：RTX PRO 6000 S 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
-  'RTX 5090':{io:['¥5.98','实时：GeForce RTX 5090 单挂',1],vast:['¥3.60起','实时最低：RTX 5090 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
-  'RTX 4090':{io:['¥2.01','实时：GeForce RTX 4090 单挂',1],vast:['¥5.76起','实时最低：RTX 4090 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]}
+  'H100':{io:['¥10.68–29.04','实时区间（84 在售）：H100 PCIe 单挂 ¥10.68 起，聚合至 ¥29.04（单卡=price÷num_cards，无 gpu_frac）',1],vast:['¥18.63–19.53','实时区间（3 单卡整卡挂单）：H100 1x 整卡 dph_total，已修正 gpu_frac 误算',1],hyperstack:['¥16.75','H100-80G-PCIe 有货·按需',0],verda:['¥20.63','H100 80GB·按需',0],cw:['¥41.24','北美按需（Spot ¥16.51）',0],crusoe:['¥26.13','H100·按需',0],nebulablock:['¥19.39','H100 PCIe 8卡按需（Spot ¥14.06起）',0]},
+  'H200':{io:['¥13.43–34.68','实时区间（4 在售）：H200 单卡 ¥13.43 起至 ¥34.68',1],vast:['¥24.22','实时（1 单卡整卡挂单）H200 1x 整卡 dph_total',1],hyperstack:['¥26.73','H200-141G-SXM5 缺货·需预约',0],verda:['¥26.93','H200 141GB·按需',0],cw:['¥42.24','北美按需（Spot ¥17.53）',0],crusoe:['¥28.74','H200·按需',0],nebulablock:['¥30.15','H200 NVLink 1卡按需',0]},
+  'B200':{io:['¥32.84','实时（1 在售）B200 单卡 ¥32.84',1],vast:['—','无 1x 整卡挂单（仅共享切片，不计入单卡价）',1],hyperstack:['¥40.20','B200-SXM 缺货·需预约',0],verda:['¥39.97','B200 180GB·No availability',0],cw:['¥57.62','北美按需（Spot ¥28.57）',0],crusoe:['—','Contact sales',0],nebulablock:['¥26.46','B200 8卡 Spot（仅）',0]},
+  'B300':{io:['¥30.22','实时：B300 SXM6 AC 有货 单卡 ¥30.22',1],vast:['—','无实时挂单',1],hyperstack:['¥49.58','B300-SXM 缺货·需预约',0],verda:['¥48.59','B300 268GB·No availability',0],cw:['—','Contact（Spot ¥30.01）',0],crusoe:['—','Contact sales',0],nebulablock:['—','未列',0]},
+  'A100':{io:['¥5.31–15.13','实时区间（13 在售）：A100 单卡 ¥5.31 起至 ¥15.13',1],vast:['¥3.60–6.30','实时区间（5 单卡整卡挂单）：A100 PCIE/SXM4 1x 整卡 dph_total',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥15.41','A100·按需',0],nebulablock:['—','未列',0]},
+  'L40S':{io:['¥5.64–13.04','实时区间（7 在售）：L40S 单卡 ¥5.64 起至 ¥13.04',1],vast:['¥5.37','实时（多卡整机折算单卡）L40S 1x 整卡 dph_total',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥10.05','L40S·按需',0],nebulablock:['—','未列',0]},
+  'RTX PRO 6000':{io:['¥13.31–15.44','实时区间（11 在售）：RTXPRO6000 / PRO 6000 BLACKWELL 单卡 ¥13.31 起',1],vast:['¥7.17–11.83','实时区间（20 单卡整卡挂单）：RTX PRO 6000 S/WS/Max-Q 1x 整卡 dph_total',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
+  'RTX 5090':{io:['¥5.98','实时（1 在售）GeForce RTX 5090 单卡 ¥5.98',1],vast:['¥3.15–7.89','实时区间（34 单卡整卡挂单）：RTX 5090 1x 整卡 dph_total',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
+  'RTX 4090':{io:['¥2.01','实时（2 在售）RTX 4090 单卡 ¥2.01',1],vast:['¥1.99–8.60','实时区间（24 单卡整卡挂单）：RTX 4090 1x 整卡 dph_total',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]}
 };
 function renderObase(){
   const head=document.getElementById('headObase'),body=document.getElementById('bodyObase');
