@@ -13,13 +13,14 @@
 <header><div class="eyebrow">Pricing intelligence · 2026-09-14</div><h1>GPU 算力价格横向对比</h1><p><span>NVIDIA 行统一口径：人民币 ¥/GPU·hr</span><span> · 单卡价 = 整机时租 ÷ GPU 数量</span><span> · 官网重核（含已登录 UI）</span></p></header>
 <main class="wrap">
 <section class="stats"><div class="stat"><span class="label">对比卡型</span><b id="gpuCount">0</b></div><div class="stat"><span class="label">覆盖平台</span><b>13</b></div><div class="stat"><span class="label">我方 SKU</span><b>67</b></div><div class="stat"><span class="label">已核验官网记录</span><b id="verifiedCount">0</b></div></section>
-<div class="toolbar" aria-label="看板筛选"><div class="tabs" role="tablist" aria-label="看板视图"><button class="tab active" role="tab" aria-selected="true" data-route="matrix">统一矩阵</button><button class="tab" role="tab" aria-selected="false" data-route="overseas">海外路线</button><button class="tab" role="tab" aria-selected="false" data-route="china">中国路线</button><button class="tab" role="tab" aria-selected="false" data-route="base">我方基准</button><button class="tab" role="tab" aria-selected="false" data-route="history">历史快照</button><button class="tab" role="tab" aria-selected="false" data-route="alert">价格预警</button></div><button id="refreshBtn" class="btn-refresh" title="从各平台抓取最新价，回写看板并保存历史快照（需先运行 node server.mjs）">🔄 刷新价格</button><button id="exportBtn" class="btn-refresh btn-ghost" title="把全部卡型 × 平台的价格矩阵导出为 Excel（.xlsx），含价格预警与来源明细两个附加表">⤓ 导出 Excel</button><label class="sr-only" for="search">搜索卡型或平台</label><input id="search" placeholder="搜索卡型 / 平台"/><label class="sr-only" for="gpuFilter">按卡型筛选</label><select id="gpuFilter"><option value="">全部卡型</option></select><span id="filterStatus" class="sr-only" aria-live="polite"></span></div>
+<div class="toolbar" aria-label="看板筛选"><div class="tabs" role="tablist" aria-label="看板视图"><button class="tab active" role="tab" aria-selected="true" data-route="matrix">统一矩阵</button><button class="tab" role="tab" aria-selected="false" data-route="overseas">海外路线</button><button class="tab" role="tab" aria-selected="false" data-route="china">中国路线</button><button class="tab" role="tab" aria-selected="false" data-route="base">我方基准</button><button class="tab" role="tab" aria-selected="false" data-route="history">历史快照</button><button class="tab" role="tab" aria-selected="false" data-route="alert">价格预警</button><button class="tab" role="tab" aria-selected="false" data-route="obase">海外基准</button></div><button id="refreshBtn" class="btn-refresh" title="从各平台抓取最新价，回写看板并保存历史快照（需先运行 node server.mjs）">🔄 刷新价格</button><button id="exportBtn" class="btn-refresh btn-ghost" title="把全部卡型 × 平台的价格矩阵导出为 Excel（.xlsx），含价格预警与来源明细两个附加表">⤓ 导出 Excel</button><label class="sr-only" for="search">搜索卡型或平台</label><input id="search" placeholder="搜索卡型 / 平台"/><label class="sr-only" for="gpuFilter">按卡型筛选</label><select id="gpuFilter"><option value="">全部卡型</option></select><span id="filterStatus" class="sr-only" aria-live="polite"></span></div>
 <section id="matrix" class="panel route active" role="tabpanel"><div class="panel-head"><h2>主价格矩阵</h2><div class="legend"><span class="tag verified">官网价</span><span class="tag pending">待重核</span><span class="tag missing">N/A</span></div></div><div class="table-wrap" tabindex="0" aria-label="主价格矩阵，可横向滚动"><table><caption class="sr-only">GPU 算力价格统一矩阵</caption><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div></section>
 <section id="overseas" class="panel route" role="tabpanel"><div class="panel-head"><h2>海外路线 · 5 家 + 我方基准</h2><span class="note">USD→CNY = 6.7156（公开 API 交叉复核）；AWS/Google Cloud/RunPod 为公开官网价</span></div><div class="table-wrap" tabindex="0" aria-label="海外价格矩阵，可横向滚动"><table><caption class="sr-only">海外 GPU 云平台价格对比</caption><thead><tr id="headOver"></tr></thead><tbody id="bodyOver"></tbody></table></div></section>
 <section id="china" class="panel route" role="tabpanel"><div class="panel-head"><h2>中国路线 · 7 家 + 我方基准</h2><span class="note">官网未公开 / 登录或配额路径未返回价格时保留 N/A</span></div><div class="table-wrap" tabindex="0" aria-label="中国价格矩阵，可横向滚动"><table><caption class="sr-only">中国 GPU 云平台价格对比</caption><thead><tr id="headChina"></tr></thead><tbody id="bodyChina"></tbody></table></div></section>
 <section id="base" class="panel route" role="tabpanel"><div class="panel-head"><h2>我方平台基准明细</h2><span class="note">星池 starpool.cc 67 SKU 按卡型聚合（单卡价 = 整机时租 ÷ 卡数），区间保留内部价差 · 2026-09-15 实测</span></div><div class="table-wrap" tabindex="0" aria-label="我方平台基准明细，可横向滚动"><table><caption class="sr-only">我方平台 67 SKU 聚合基准</caption><thead><tr><th scope="col">卡型</th><th scope="col">单卡价格（¥/GPU·hr）</th><th scope="col">备注</th></tr></thead><tbody id="bodyBase"></tbody></table></div></section>
 <section id="history" class="panel route" role="tabpanel"><div class="panel-head"><h2>历史快照 · 本地存档</h2><span class="note" id="histMeta">加载中…</span></div><div class="hist-body"><div class="toolbar" style="margin:0 0 10px"><label for="histCard">卡型走势：</label><select id="histCard"></select><span class="note">每次刷新在 <code>history/</code> 落一个 JSON 快照，可 git 提交到 GitHub 备份</span></div><div class="table-wrap"><table class="trend"><thead><tr id="histHead"></tr></thead><tbody id="histBody"></tbody></table></div><h3>快照清单</h3><div class="table-wrap"><table><thead><tr><th>时间</th><th>单元格</th><th>已核验</th><th>待重核</th><th>N/A</th><th>变化</th></tr></thead><tbody id="histList"></tbody></table></div></div></section>
 <section id="alert" class="panel route" role="tabpanel"><div class="panel-head"><h2>价格预警 · 仅对比国内平台</h2><span class="note" id="alertMeta">计算中…</span></div><div class="hist-body"><div class="alert-note"><b>口径：</b>以「我方平台」单卡价为基准，<b>只横向对比国内平台</b>（阿里云 / 网鼎立方云 / 腾讯云 / 火山引擎 / 智星云 / AutoDL / 华为云）——<b>海外平台不参与预警</b>。「国内平台均价」= 上述国内平台中<b>有报价</b>者单卡价的算术平均数（不含我方平台、不含 N/A），区间价取中点。<b>「国内高出我方%」=（国内平台均价 − 我方平台）÷ 我方平台 × 100%</b>：正值表示国内同行比我方贵（我方有价格优势），负值表示国内同行比我方便宜（<span class="warn">预警</span>，阈值 ±5%）。</div><div class="table-wrap"><table class="alert-table"><thead><tr><th>卡型</th><th>我方平台</th><th>国内覆盖数</th><th>国内平台均价</th><th>国内高出我方%</th><th>状态</th></tr></thead><tbody id="alertBody"></tbody></table></div></div></section>
+<section id="obase" class="panel route" role="tabpanel"><div class="panel-head"><h2>海外基准 · 7 家（IO.net / Vast.ai 实时 + 5 家官网标价）</h2><span class="note">单位 ¥/单卡·小时 · IO.net 与 Vast.ai = 2026-09-20 实时抓取（官方 API / SDK），分钟级波动；其余 5 家 = 官网标价（用户提供）。「实时」列为活体市场最低挂单，可能与官网按需标价不可直接等价</span></div><div class="table-wrap" tabindex="0" aria-label="海外基准价格矩阵，可横向滚动"><table><caption class="sr-only">海外 GPU 基准价格对比</caption><thead><tr id="headObase"></tr></thead><tbody id="bodyObase"></tbody></table></div></section>
 <div class="footer">数据口径来自用户提供的《GPU价格对比任务规范.md》。海外换算采用 <a class="link" href="https://open.er-api.com/v6/latest/USD" target="_blank" rel="noreferrer">USD/CNY 6.7156</a>（2026-09-14 公开 API 交叉复核）。我方平台列为星池 starpool.cc 67 个 SKU 单卡折算（2026-09-15 实测）。每个单元格都显示来源、计费类型与采集时间；N/A 仍保留对应官网入口与事实原因。NVIDIA 行为 ¥/GPU·hr；昇腾为 ¥/NPU·hr，T4 虚拟分片不纳入矩阵。⚠️ 表示动态市场价、特殊计费或型号命名待确认。</div>
 </main>
 <script>
@@ -404,6 +405,54 @@ function renderAlert(){
 const alertTab=document.querySelector('.tab[data-route="alert"]');
 if(alertTab)alertTab.addEventListener('click',renderAlert);
 renderAlert();
+
+/* ============================================================
+   海外基准视图（IO.net / Vast.ai 实时 + 5 家官网标价）
+   ============================================================ */
+const obaseModels=['H100','H200','B200','B300','A100','L40S','RTX PRO 6000','RTX 5090','RTX 4090'];
+const obaseCols=[
+  {key:'io',name:'IO.net',live:true},
+  {key:'vast',name:'Vast.ai',live:true},
+  {key:'hyperstack',name:'hyperstack'},
+  {key:'verda',name:'verda'},
+  {key:'cw',name:'CoreWeave（北美）'},
+  {key:'crusoe',name:'Crusoe'},
+  {key:'nebulablock',name:'nebulablock'}
+];
+const overseasBase={
+  'H100':{io:['¥10.68起','实时最低：H100 PCIe 单挂；聚合档 ¥24.09–29.04（84 在售）',1],vast:['¥18.63起','实时最低：H100 NVL 活体挂单（H100 SXM 现 ¥149.90）',1],hyperstack:['¥16.75','H100-80G-PCIe 有货·按需',0],verda:['¥20.63','H100 80GB·按需',0],cw:['¥41.24','北美按需（Spot ¥16.51）',0],crusoe:['¥26.13','H100·按需',0],nebulablock:['¥19.39','H100 PCIe 8卡按需（Spot ¥14.06起）',0]},
+  'H200':{io:['¥13.43','实时最低：H200 活体挂单（聚合 ¥13.43–34.68）',1],vast:['¥58.32起','实时最低：H200 活体挂单（偏贵）',1],hyperstack:['¥26.73','H200-141G-SXM5 缺货·需预约',0],verda:['¥26.93','H200 141GB·按需',0],cw:['¥42.24','北美按需（Spot ¥17.53）',0],crusoe:['¥28.74','H200·按需',0],nebulablock:['¥30.15','H200 NVLink 1卡按需',0]},
+  'B200':{io:['¥32.84','实时最低：B200 活体挂单（聚合 ¥32.84–46.94）',1],vast:['¥109.15起','实时最低：B200 活体挂单（偏贵）',1],hyperstack:['¥40.20','B200-SXM 缺货·需预约',0],verda:['¥39.97','B200 180GB·No availability',0],cw:['¥57.62','北美按需（Spot ¥28.57）',0],crusoe:['—','Contact sales',0],nebulablock:['¥26.46','B200 8卡 Spot（仅）',0]},
+  'B300':{io:['¥30.22','实时：B300 SXM6 AC 有货',1],vast:['—','无实时挂单',1],hyperstack:['¥49.58','B300-SXM 缺货·需预约',0],verda:['¥48.59','B300 268GB·No availability',0],cw:['—','Contact（Spot ¥30.01）',0],crusoe:['—','Contact sales',0],nebulablock:['—','未列',0]},
+  'A100':{io:['¥8.66','实时最低：A100-SXM4-80GB/PCIE 单挂（聚合 ¥8.66–15.13）',1],vast:['¥19.07起','实时最低：A100 PCIE 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥15.41','A100·按需',0],nebulablock:['—','未列',0]},
+  'L40S':{io:['¥5.64','实时最低：L40S 活体挂单（聚合 ¥5.64–13.04）',1],vast:['¥43.05','实时：L40S 活体挂单（偏贵）',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['¥10.05','L40S·按需',0],nebulablock:['—','未列',0]},
+  'RTX PRO 6000':{io:['¥13.31起','实时最低：RTXPRO6000（PRO 6000 BLACKWELL ¥14.03）',1],vast:['¥17.92起','实时最低：RTX PRO 6000 S 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
+  'RTX 5090':{io:['¥5.98','实时：GeForce RTX 5090 单挂',1],vast:['¥3.60起','实时最低：RTX 5090 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]},
+  'RTX 4090':{io:['¥2.01','实时：GeForce RTX 4090 单挂',1],vast:['¥5.76起','实时最低：RTX 4090 活体挂单',1],hyperstack:['—','未列',0],verda:['—','未列',0],cw:['—','未列',0],crusoe:['—','未列',0],nebulablock:['—','未列',0]}
+};
+function renderObase(){
+  const head=document.getElementById('headObase'),body=document.getElementById('bodyObase');
+  if(!head||!body)return;
+  head.innerHTML='<th scope="col">卡型</th>'+obaseCols.map(c=>'<th scope="col">'+c.name+(c.live?'<br><span class="note">实时</span>':'')+'</th>').join('')+'<th scope="col">当前最低来源</th>';
+  body.innerHTML=obaseModels.map(function(g){
+    const row=overseasBase[g];
+    let best=null;
+    obaseCols.forEach(function(c){
+      const n=numOf(row[c.key]?row[c.key][0]:null);
+      if(n!=null&&(best==null||n<best.n))best={name:c.name,n:n,v:row[c.key][0]};
+    });
+    return '<tr><th scope="row" class="gpu">'+g+'</th>'+obaseCols.map(function(c){
+      const cell=row[c.key];
+      if(!cell||cell[0]==='—')return '<td><span class="na">—</span></td>';
+      const cls=c.live?'pending':'verified';
+      const tag=c.live?'⚠️ 实时':'官网价';
+      return '<td><span class="price">'+esc(cell[0])+'</span><span class="meta">单卡/小时</span><span class="tag '+cls+'">'+tag+'</span><details class="evidence"><summary>来源与证据</summary><span class="meta">'+esc(cell[1])+'</span></details></td>';
+    }).join('')+'<td>'+(best?('<span class="good">'+esc(best.name)+'</span><br><span class="meta">'+esc(best.v)+'</span>'):'—')+'</td></tr>';
+  }).join('');
+}
+const obaseTab=document.querySelector('.tab[data-route="obase"]');
+if(obaseTab)obaseTab.addEventListener('click',renderObase);
+renderObase();
 
 /* ============================================================
    导出 Excel（纯前端生成 .xlsx：STORED 方式打包 ZIP，无外部依赖）
